@@ -1,5 +1,5 @@
 import Post from "../models/post";
-import { ResponseData } from "./app_handler";
+import { ResponseData, Error } from "./app_handler";
 
 export class PostsHandler {
   public create(req): ResponseData {
@@ -7,12 +7,17 @@ export class PostsHandler {
     const m = new Post(uri, comment);
     m.create();
 
+    const error: Error = {
+      isError: false,
+      messages: []
+    }
+
     return {
       payload: {
         uri,
         comment,
       },
-      errors: [],
+      error
     }
   }
 

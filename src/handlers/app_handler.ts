@@ -1,4 +1,8 @@
+export interface Error {
+    isError: boolean;
+    messages: [];
+}
 export interface ResponseData {
   payload: Object;
-  errors: string[];
+  error: Error;
 }
