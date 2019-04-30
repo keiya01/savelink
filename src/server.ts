@@ -12,9 +12,7 @@ export const serverStart = () => {
   });
 
   server.listen(port, hostName, () => {
-
     console.log(`Server running at http://${hostName}:${port}`);
-    
   });
 
 }
