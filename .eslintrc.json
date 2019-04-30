@@ -8,11 +8,18 @@
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
     },
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "parserOptions": {
+        "project": "./tsconfig.json",
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
     "rules": {
+        "@typescript-eslint/restrict-plus-operands": "error",
+        "@typescript-eslint/no-unused-vars": "error",
         "no-console": "warn"
     }
 }
