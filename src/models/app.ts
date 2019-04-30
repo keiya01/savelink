@@ -45,8 +45,10 @@ export default class App {
     const client = setDBClient();
     try{
       client.query(sql, fieldValues);
+      return false;
     } catch(err) {
       console.error(err.stack);
+      return true;
     }
   }
 }

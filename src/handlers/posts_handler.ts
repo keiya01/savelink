@@ -1,15 +1,20 @@
 import Post from "../models/post";
-import { ResponseData, Error } from "./app_handler";
+import AppHandler, { ResponseData, Error } from "./app_handler";
 
-export class PostsHandler {
+export class PostsHandler extends AppHandler {
   public create(req): ResponseData {
     const { uri, comment } = req.params;
-    const m = new Post(uri, comment);
-    m.create();
+    const post = new Post(uri, comment);
+    const isError = post.create();
+
+    const errorMessages: string[] = [];
+    if(isError) {
+      errorMessages.push("保存できませんでした");
+    }
 
     const error: Error = {
-      isError: false,
-      messages: []
+      isError,
+      messages: errorMessages
     }
 
     return {
