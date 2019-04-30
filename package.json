@@ -17,6 +17,7 @@
   "lint-staged": {
     "linters": {
       "src/**/*.ts": [
+        "eslint",
         "git add"
       ]
     },
@@ -33,6 +34,8 @@
   },
   "devDependencies": {
     "@types/node": "^11.13.8",
+    "husky": "^2.1.0",
+    "lint-staged": "^8.1.5",
     "ts-node": "^8.1.0",
     "ts-node-dev": "^1.0.0-pre.32"
   }
