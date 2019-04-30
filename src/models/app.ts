@@ -9,15 +9,15 @@ export default class App {
     this.tableData = tableData;
   }
 
-  private parseQuery(tableData: Object) {
-    const fields = Object.keys(tableData);
+  public parseQuery() {
+    const fields = Object.keys(this.tableData);
     
     const query = fields.reduce((query, field) => {
       return [
         fields,
         [
           ...query[1],
-          tableData[field]
+          this.tableData[field]
         ]
       ]
     }, [fields, []]);
@@ -25,8 +25,8 @@ export default class App {
     return query;
   }
 
-  private getSQL(): [string, string[]] {
-    const [fields, fieldValues] = this.parseQuery(this.tableData);
+  public getSQL(): [string, string[]] {
+    const [fields, fieldValues] = this.parseQuery();
 
     const escapeKeys: string[] = [];
     for(let i = 1; i <= fields.length; i++) {

@@ -7,7 +7,8 @@
     "start": "npx ts-node",
     "start:hot-reload": "npx ts-node-dev src/index.ts",
     "build": "npx tsc",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "test": "jest"
   },
   "husky": {
     "hooks": {
@@ -35,10 +36,16 @@
     "typescript": "^3.4.5"
   },
   "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-typescript": "^7.3.3",
+    "@types/jest": "^24.0.12",
     "@types/node": "^11.13.8",
     "@typescript-eslint/eslint-plugin": "^1.7.0",
     "@typescript-eslint/parser": "^1.7.0",
+    "babel-jest": "^24.7.1",
     "husky": "^2.1.0",
+    "jest": "^24.7.1",
     "lint-staged": "^8.1.5",
     "ts-node": "^8.1.0",
     "ts-node-dev": "^1.0.0-pre.32"
