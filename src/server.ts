@@ -1,18 +1,27 @@
-import HTTP from "http";
+'use strict';
+
+const Hapi = require('hapi');
 
 
-export const serverStart = () => {
-  const hostName = "127.0.0.1";
-  const port = 3000;
-  
-  const server = HTTP.createServer((_, res) => {
-    res.statusCode = 200;
-    res.setHeader("Content-Type", "text/plain");
-    res.end("Hello World\n");
+export const serverStart = async () => {
+  const server = Hapi.server({
+    port: 3000,
+    host: 'localhost'
   });
 
-  server.listen(port, hostName, () => {
-    console.log(`Server running at http://${hostName}:${port}`);
+  server.route({
+    method: 'GET',
+    path: '/',
+    handler: () => {
+      return 'Hello World!';
+    }
   });
 
+  await server.start();
+  console.log('Server running on %ss', server.info.uri);
 }
+
+process.on("unhandledRejection", (err) => {
+  console.log(err);
+  process.exit(1);
+});

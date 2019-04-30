@@ -26,9 +26,11 @@
     ]
   },
   "dependencies": {
+    "@types/hapi": "^18.0.2",
     "@types/pg": "^7.4.14",
     "eslint": "^5.16.0",
     "global": "^4.3.2",
+    "hapi": "^18.1.0",
     "pg": "^7.10.0",
     "typescript": "^3.4.5"
   },
