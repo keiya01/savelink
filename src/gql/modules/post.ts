@@ -1,7 +1,5 @@
 import postsHandler  from "../../handlers/posts_handler";
 
-
-
 const typeDef = `
   type Post {
     id: Int
@@ -15,6 +13,9 @@ const p = new postsHandler();
 const resolvers = {
   Query: {
     posts: () => p.findAll()
+  },
+  Mutation: {
+    createPost: p.create
   }
 }
 
