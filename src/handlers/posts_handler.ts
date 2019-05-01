@@ -3,23 +3,38 @@ import AppHandler from "./app_handler";
 import { UserInputError } from "apollo-server-hapi";
 
 export default class PostsHandler extends AppHandler {
-  public create = (_, { uri, comment }) => {
-    const correctURI = this.validateURI(uri) && this.validateEmpty(uri);
-    if(!correctURI) {
-      throw new UserInputError(`Can not use this value: ${uri}`, {
-        argument: "uri"
+  public validate(uri, comment) {
+    if(!this.validateEmpty(uri)) {
+      throw new UserInputError(`URI can not be empty`, {
+        argument: "uri",
+        cause: "empty"
       });
     }
 
-    const p = new Post(uri, comment);
-    const post = p.create();
-
-    if(!post) {
-      throw new UserInputError("Could not save data");
+    if(!this.validateURI(uri)) {
+        throw new UserInputError(`Can not use this value: ${uri}`, {
+          argument: "uri",
+          cause: "format"
+        });
     }
 
+    if(comment !== null && comment.length === 0) {
+      throw new UserInputError(`Comment can not be empty`, {
+        argument: "comment",
+        cause: "empty"
+      });
+    }
+  }
+
+  public create = (_, { uri, comment }) => {
+    this.validate(uri, comment);
+
+    const p = new Post(uri, comment);
+    p.create();
+
     return {
-      ...post
+      uri,
+      comment
     }
   }
 

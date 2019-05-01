@@ -39,17 +39,11 @@ export default class App {
     return [sql, fieldValues];
   }
 
-  public async create() {
+  public create() {
     const [sql, fieldValues] = this.getSQL();
-
+    
     const client = setDBClient();
-    const data = await client.query(sql, fieldValues).catch(err => console.error(err.stack));
-
-    if(!data) {
-      return;
-    }
-
-    return data.rows;
+    client.query(sql, fieldValues).catch(err => console.error(err.stack));
   }
 
   public async findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
