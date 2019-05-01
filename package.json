@@ -27,10 +27,13 @@
     ]
   },
   "dependencies": {
+    "@types/graphql": "^14.2.0",
     "@types/hapi": "^18.0.2",
     "@types/pg": "^7.4.14",
+    "apollo-server-hapi": "^2.4.8",
     "eslint": "^5.16.0",
     "global": "^4.3.2",
+    "graphql": "^14.2.1",
     "hapi": "^18.1.0",
     "pg": "^7.10.0",
     "typescript": "^3.4.5"
