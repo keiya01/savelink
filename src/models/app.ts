@@ -25,7 +25,7 @@ export default class App {
     return query;
   }
 
-  public getSQL(): [string, string[]] {
+  public getInsertSQL(): [string, string[]] {
     const [fields, fieldValues] = this.parseQuery();
 
     const escapeKeys: string[] = [];
@@ -40,7 +40,7 @@ export default class App {
   }
 
   public create() {
-    const [sql, fieldValues] = this.getSQL();
+    const [sql, fieldValues] = this.getInsertSQL();
     
     const client = setDBClient();
     client.query(sql, fieldValues).catch(err => console.error(err.stack));
@@ -67,4 +67,6 @@ export default class App {
 
     return data.rows;
   }
+
+  public findOne() {}
 }
