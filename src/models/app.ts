@@ -11,7 +11,7 @@ export default class App {
 
   public parseQuery() {
     const fields = Object.keys(this.tableData);
-    
+
     const query = fields.reduce((query, field) => {
       return [
         fields,
@@ -29,26 +29,46 @@ export default class App {
     const [fields, fieldValues] = this.parseQuery();
 
     const escapeKeys: string[] = [];
-    for(let i = 1; i <= fields.length; i++) {
+    for (let i = 1; i <= fields.length; i++) {
       const escapeKey = `$${i}`;
       escapeKeys.push(escapeKey);
     }
 
-     const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
+    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
 
-     return [sql, fieldValues];
+    return [sql, fieldValues];
   }
 
   public create() {
     const [sql, fieldValues] = this.getSQL();
 
     const client = setDBClient();
-    try{
+    try {
       client.query(sql, fieldValues);
       return false;
-    } catch(err) {
+    } catch (err) {
       console.error(err.stack);
       return true;
+    }
+  }
+
+  public findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
+    let order = _order;
+    if (!order) {
+      order = {
+        type: "DESC",
+        column: 'id'
+      };
+    }
+
+    const sql = `SELECT ${columns.join()} FROM ${this.tableName} ORDER BY ${order.column} ${order.type}`;
+
+    const client = setDBClient();
+    try {
+      return client.query(sql);
+    } catch (err) {
+      console.error(err);
+      return [];
     }
   }
 }

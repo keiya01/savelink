@@ -1,29 +1,28 @@
 import Post from "../models/post";
-import AppHandler, { ResponseData, Error } from "./app_handler";
+import AppHandler, { Error } from "./app_handler";
 
 export class PostsHandler extends AppHandler {
-  public create(req): ResponseData {
-    const { uri, comment } = req.params;
-    const post = new Post(uri, comment);
-    const isError = post.create();
+  public create(_, { uri, comment }) {
+    const p = new Post(uri, comment);
 
-    const errorMessages: string[] = [];
-    if(isError) {
-      errorMessages.push("保存できませんでした");
-    }
-
-    const error: Error = {
-      isError,
-      messages: errorMessages
+    let error: Error = {
+      isError: false,
+      messages: []
+    };
+    if (p.create()) {
+      error = this.newError(["保存できませんでした"])
     }
 
     return {
-      payload: {
-        uri,
-        comment,
-      },
+      uri,
+      comment,
       error
     }
   }
+  public findAll() {
+    const p = new Post();
+    const posts = p.findAll(["*"], {type: "DESC", column: "id"});
 
+    return posts
+  }
 }
