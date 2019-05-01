@@ -45,14 +45,12 @@ export default class App {
     const client = setDBClient();
     try {
       client.query(sql, fieldValues);
-      return false;
     } catch (err) {
       console.error(err.stack);
-      return true;
     }
   }
 
-  public findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
+  public async findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
     let order = _order;
     if (!order) {
       order = {
@@ -61,11 +59,11 @@ export default class App {
       };
     }
 
-    const sql = `SELECT ${columns.join()} FROM ${this.tableName} ORDER BY ${order.column} ${order.type}`;
+    const sql = `SELECT ${columns.join()} FROM ${this.tableName} ORDER BY ${order.column} ${order.type};`;
 
     const client = setDBClient();
     try {
-      return client.query(sql);
+      return await client.query(sql);
     } catch (err) {
       console.error(err);
       return [];

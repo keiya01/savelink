@@ -1,26 +1,8 @@
-'use strict';
-import { ApolloServer, gql } from "apollo-server-hapi";
+import { ApolloServer } from "apollo-server-hapi";
+import { typeDefs, resolvers } from "./gql";
 const Hapi = require('hapi');
 
 export const start = async () => {
-  const typeDefs = gql`
-    type Post {
-      id: int
-      uri: string
-      comment: string
-    }
-
-    type Query {
-      posts: [Post]
-
-    }
-  `;
-
-  const resolvers = {
-    Query: {
-      posts: () => []
-    }
-  }
 
   const server = new ApolloServer({
     typeDefs,

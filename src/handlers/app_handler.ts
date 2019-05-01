@@ -4,10 +4,17 @@ export interface Error {
 }
 
 export default class AppHandler {
-  public newError(messages: string[]): Error {
+  public checkError(isError: boolean, messages: string[]): Error {
+    if(isError) {
+      return {
+        isError: true,
+        messages
+      }
+    }
+
     return {
-      isError: true,
-      messages
+      isError: false,
+      messages: []
     }
   }
 
