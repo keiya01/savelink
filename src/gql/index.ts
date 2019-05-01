@@ -12,8 +12,5 @@ export const typeDefs = gql`
 export const resolvers = {
   Query: {
     ...post.resolvers.Query
-  },
-  Mutation: {
-    ...post.resolvers.Mutation
   }
 }

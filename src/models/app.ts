@@ -62,11 +62,13 @@ export default class App {
     const sql = `SELECT ${columns.join()} FROM ${this.tableName} ORDER BY ${order.column} ${order.type};`;
 
     const client = setDBClient();
-    try {
-      return await client.query(sql);
-    } catch (err) {
-      console.error(err);
+
+    const data = await client.query(sql).catch((err) => console.error(err));
+
+    if(!data) {
       return [];
     }
+    
+    return data.rows;
   }
 }
