@@ -44,4 +44,18 @@ export default class PostsHandler extends AppHandler {
 
     return posts;
   }
+
+  public findById(_, {id}) {
+    if(id === 0) {
+      throw new UserInputError(`Can not use this value: ${id}`, {
+        argument: "id",
+        cause: "zero"
+      })
+    }
+
+    const p = new Post();
+    const post = p.findBy("id = $1", [id]);
+
+    return post;
+  }
 }

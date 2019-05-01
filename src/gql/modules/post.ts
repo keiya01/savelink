@@ -12,7 +12,8 @@ const p = new postsHandler();
 
 const resolvers = {
   Query: {
-    posts: () => p.findAll()
+    posts: () => p.findAll(),
+    post: p.findById,
   },
   Mutation: {
     createPost: p.create

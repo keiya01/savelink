@@ -1,8 +1,8 @@
 import App from "./app";
 
 export default class Post extends App {
-  constructor(uri?: string, comment?: string) {
-    super("Post", {uri, comment, created_at: new Date});
+  constructor(id?: number, uri?: string, comment?: string) {
+    super("Post", {id, uri, comment, created_at: new Date});
   }
 
 }

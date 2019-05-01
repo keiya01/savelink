@@ -25,16 +25,22 @@ export default class App {
     return query;
   }
 
-  public getInsertSQL(): [string, string[]] {
-    const [fields, fieldValues] = this.parseQuery();
-
+  public getEscapeKeys(totalFields: number) {
     const escapeKeys: string[] = [];
-    for (let i = 1; i <= fields.length; i++) {
+    for (let i = 1; i <= totalFields; i++) {
       const escapeKey = `$${i}`;
       escapeKeys.push(escapeKey);
     }
 
-    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
+    return escapeKeys.join();
+  }
+
+  public getInsertSQL(): [string, string[]] {
+    const [fields, fieldValues] = this.parseQuery();
+
+    const escapeKeys = this.getEscapeKeys(fields.length);
+
+    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys});`;
 
     return [sql, fieldValues];
   }
@@ -68,5 +74,17 @@ export default class App {
     return data.rows;
   }
 
-  public findOne() {}
+  public async findBy(where: string, values: any[]) {
+    const sql = `SELECT * FROM ${this.tableName} WHERE ${where}`;
+
+    const client = setDBClient();
+    
+    const data = await client.query(sql, values).catch(err => console.error(err));
+
+    if(!data) {
+      return null;
+    }
+
+    return data.rows[0];
+  }
 }

@@ -4,6 +4,7 @@ import post from "./modules/post";
 export const typeDefs = gql`
   type Query {
     posts: [Post]
+    post(id: Int): Post
   }
 
   type Mutation {
