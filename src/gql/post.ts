@@ -1,4 +1,4 @@
-import postsHandler  from "../../handlers/posts_handler";
+import postsHandler  from "../handlers/posts_handler";
 
 const typeDef = `
   type Post {

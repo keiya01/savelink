@@ -1,5 +1,5 @@
 import { gql } from "apollo-server-hapi";
-import post from "./modules/post";
+import post from "./post";
 
 export const typeDefs = gql`
   type Query {
