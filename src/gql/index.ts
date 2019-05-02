@@ -9,6 +9,7 @@ export const typeDefs = gql`
 
   type Mutation {
     createPost(uri: String!, comment: String): Post
+    updatePost(uri: String, comment: String): Post
   }
   
   ${post.typeDef}

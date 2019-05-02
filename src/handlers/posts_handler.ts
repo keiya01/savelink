@@ -26,21 +26,9 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  public create = (_, { uri, comment }) => {
-    this.validate(uri, comment);
-
-    const p = new Post(uri, comment);
-    p.create();
-
-    return {
-      uri,
-      comment
-    }
-  }
-
   public findAll() {
     const p = new Post();
-    const posts = p.findAll(["*"], {type: "DESC", column: "id"});
+    const posts = p.findAll(["*"], {type: "DESC", column: "created_at"});
 
     return posts;
   }
@@ -57,5 +45,17 @@ export default class PostsHandler extends AppHandler {
     const post = p.findBy("id = $1", [id]);
 
     return post;
+  }
+
+  public create = (_, { uri, comment }) => {
+    this.validate(uri, comment);
+
+    const p = new Post(uri, comment);
+    p.create();
+
+    return {
+      uri,
+      comment
+    }
   }
 }

@@ -1,8 +1,8 @@
 import { setDBClient } from "../database";
 
 export default class App {
-  public tableName: string;
-  public tableData: Object;
+  private tableName: string;
+  private tableData: Object;
 
   public constructor(tableName: string, tableData: Object) {
     this.tableName = tableName;
