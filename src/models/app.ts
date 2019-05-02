@@ -2,14 +2,26 @@ import { setDBClient } from "../database";
 
 export default class App {
   private tableName: string;
-  public tableData: Object;
+  private tableData: Object;
 
   public constructor(tableName: string, tableData: Object) {
     this.tableName = tableName;
     this.tableData = tableData;
   }
 
-  public getFieldData() {
+  public getTableData() {
+    return this.tableData;
+  }
+
+  public getPrivateFunctionForTest = () => {
+    return {
+      getFieldData: () => this.getFieldData(),
+      getEscapeKeys: (totalFields: number) => this.getEscapeKeys(totalFields),
+      getTemplateUpdatingSQL: () => this.getTemplateUpdatingSQL()
+    }
+  }
+
+  private getFieldData() {
     const fields = Object.keys(this.tableData);
     const fieldData = fields.reduce((query: any[], field) => {
       return [
@@ -21,7 +33,7 @@ export default class App {
     return fieldData;
   }
 
-  public getEscapeKeys(totalFields: number) {
+  private getEscapeKeys(totalFields: number) {
     const escapeKeys: string[] = [];
     for (let i = 1; i <= totalFields; i++) {
       const escapeKey = `$${i}`;
@@ -31,7 +43,7 @@ export default class App {
     return escapeKeys;
   }
 
-  public getTemplateUpdatingSQL() {
+  private getTemplateUpdatingSQL() {
     const fields = Object.keys(this.tableData);
     const escapeKeys = this.getEscapeKeys(fields.length);
 

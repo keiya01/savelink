@@ -76,7 +76,7 @@ export default class PostsHandler extends AppHandler {
       default: this.validate(uri, comment);
     }
 
-    if (Object.keys(p.tableData).length === 0) {
+    if (Object.keys(p.getTableData()).length === 0) {
       return {};
     }
 
