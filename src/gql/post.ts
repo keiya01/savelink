@@ -20,7 +20,8 @@ const resolvers = {
     post: p.findById,
   },
   Mutation: {
-    createPost: p.create
+    createPost: p.create,
+    updatePost: p.update
   }
 }
 

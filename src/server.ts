@@ -25,5 +25,5 @@ export const start = async () => {
     console.error(err);
   }
 
-  console.log('Server running on %ss', app.info.uri);
+  console.log('Server running on %s', app.info.uri);
 }

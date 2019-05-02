@@ -27,11 +27,11 @@ export default class AppHandler {
     return true;
   }
 
-  public validateEmpty(value) {
-    if(!value) {
-      return false;
-    }
+  public checkEmpty(value?: any) {
+    return !value || value === ""
+  }
 
-    return true;
+  public checkEmptyString(value?: string) {
+    return value && value === "";
   }
 }

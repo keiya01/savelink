@@ -2,27 +2,23 @@ import { setDBClient } from "../database";
 
 export default class App {
   private tableName: string;
-  private tableData: Object;
+  public tableData: Object;
 
   public constructor(tableName: string, tableData: Object) {
     this.tableName = tableName;
     this.tableData = tableData;
   }
 
-  public parseQuery() {
+  public getFieldData() {
     const fields = Object.keys(this.tableData);
-
-    const query = fields.reduce((query, field) => {
+    const fieldData = fields.reduce((query: any[], field) => {
       return [
-        fields,
-        [
-          ...query[1],
+          ...query,
           this.tableData[field]
         ]
-      ]
-    }, [fields, []]);
+    }, []);
 
-    return query;
+    return fieldData;
   }
 
   public getEscapeKeys(totalFields: number) {
@@ -32,24 +28,22 @@ export default class App {
       escapeKeys.push(escapeKey);
     }
 
-    return escapeKeys.join();
+    return escapeKeys;
   }
 
-  public getInsertSQL(): [string, string[]] {
-    const [fields, fieldValues] = this.parseQuery();
-
+  public getTemplateUpdatingSQL() {
+    const fields = Object.keys(this.tableData);
     const escapeKeys = this.getEscapeKeys(fields.length);
 
-    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys});`;
+    return fields.reduce((sql, column, index) => {
+      const escapeKey = escapeKeys[index];
 
-    return [sql, fieldValues];
-  }
+      if(sql === "") {
+        return `${column} = ${escapeKey}`;
+      }
 
-  public create() {
-    const [sql, fieldValues] = this.getInsertSQL();
-    
-    const client = setDBClient();
-    client.query(sql, fieldValues).catch(err => console.error(err.stack));
+      return `${sql} ${column} = ${escapeKey}`;
+    }, "");
   }
 
   public async findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
@@ -86,5 +80,28 @@ export default class App {
     }
 
     return data.rows[0];
+  }
+
+  public create() {
+    const fields = Object.keys(this.tableData);
+    const fieldValues = this.getFieldData();
+
+    const escapeKeys = this.getEscapeKeys(fields.length);
+
+    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
+    
+    const client = setDBClient();
+    client.query(sql, fieldValues).catch(err => console.error(err.stack));
+  }
+
+  public update(id: string) {
+    const updateValue = this.getTemplateUpdatingSQL();
+    const fieldData = this.getFieldData();
+    fieldData.push(id);
+
+    const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length}`;
+
+    const client = setDBClient();
+    client.query(sql, fieldData).catch(err => console.error(err));
   }
 }

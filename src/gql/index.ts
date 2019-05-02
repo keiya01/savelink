@@ -4,12 +4,12 @@ import post from "./post";
 export const typeDefs = gql`
   type Query {
     posts: [Post]
-    post(id: Int): Post
+    post(id: ID): Post
   }
 
   type Mutation {
     createPost(uri: String!, comment: String): Post
-    updatePost(uri: String, comment: String): Post
+    updatePost(id: ID, uri: String, comment: String): Post
   }
   
   ${post.typeDef}
