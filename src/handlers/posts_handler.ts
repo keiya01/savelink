@@ -3,7 +3,7 @@ import AppHandler from "./app_handler";
 import { UserInputError } from "apollo-server-hapi";
 
 export default class PostsHandler extends AppHandler {
-  public validate(uri?: string, comment?: string) {
+  private validate(uri?: string, comment?: string) {
     if (uri === "") {
       throw new UserInputError(`URI can not be empty`, {
         argument: "uri",
@@ -12,7 +12,7 @@ export default class PostsHandler extends AppHandler {
     }
 
     if (uri && !this.validateURI(uri)) {
-      throw new UserInputError(`Can not use this value: ${uri}`, {
+      throw new UserInputError(`This value can not be used: ${uri}`, {
         argument: "uri",
         cause: "format"
       });
@@ -26,6 +26,18 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
+  private validateID(id: string) {
+    const p = new Post();
+    let canFind = false;
+    p.findBy("id = $1", [id]).then(post => {
+      if (!post) {
+        canFind = false;
+      }
+      canFind = true;
+    });
+    return canFind;
+  }
+
   public findAll() {
     const p = new Post();
     const posts = p.findAll(["*"], { type: "DESC", column: "created_at" });
@@ -35,7 +47,7 @@ export default class PostsHandler extends AppHandler {
 
   public findById(_, { id }) {
     if (id === "0") {
-      throw new UserInputError(`Can not use this value: ${id}`, {
+      throw new UserInputError(`This value can not used: ${id}`, {
         argument: "id",
         cause: "zero"
       })
@@ -60,8 +72,14 @@ export default class PostsHandler extends AppHandler {
   }
 
   public update = (_, { id, uri, comment }) => {
-    let canUpdate = false;
+    if (!this.validateID(id)) {
+      throw new UserInputError(`id ${id} not found`, {
+        argument: "id",
+        cause: "not_found"
+      });
+    }
 
+    let canUpdate = false;
     if (uri || comment) {
       canUpdate = true;
     }
@@ -96,7 +114,14 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  public delete(_, { id }) {
+  public delete = (_, { id }) => {
+    if (!this.validateID(id)) {
+      throw new UserInputError(`id ${id} not found`, {
+        argument: "id",
+        cause: "not_found"
+      });
+    }
+
     const p = new Post();
     const postBeforeDeleted = p.findBy("id = $1", [id]);
 
