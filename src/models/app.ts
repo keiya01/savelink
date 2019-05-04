@@ -106,14 +106,17 @@ export default class App {
     client.query(sql, fieldValues).catch(err => console.error(err.stack));
   }
 
-  public update(id: string) {
+  public update() {
     const updateValue = this.getTemplateUpdatingSQL();
     const fieldData = this.getFieldData();
-    fieldData.push(id);
 
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length}`;
 
     const client = setDBClient();
     client.query(sql, fieldData).catch(err => console.error(err));
+  }
+
+  public delete() {
+    
   }
 }

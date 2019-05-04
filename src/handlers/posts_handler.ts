@@ -1,4 +1,4 @@
-import Post from "../models/post";
+import Post, { PostModelProps } from "../models/post";
 import AppHandler from "./app_handler";
 import { UserInputError } from "apollo-server-hapi";
 
@@ -60,32 +60,46 @@ export default class PostsHandler extends AppHandler {
   }
 
   public update = (_, { id, uri, comment }) => {
-    let p = new Post();
+    let canUpdate = false;
+
+    if (uri || comment) {
+      canUpdate = true;
+    }
+
+    let updatingData: PostModelProps = {};
     switch (true) {
       case !this.checkEmptyString(uri) && !this.checkEmptyString(comment):
         this.validate(uri, comment);
-        p = new Post({ uri, comment });
+        updatingData = { uri, comment };
         break;
       case !this.checkEmptyString(uri):
         this.validate(uri);
-        p = new Post({ uri });
+        updatingData = { uri };
         break;
       case !this.checkEmptyString(comment):
-        p = new Post({ comment });
+        updatingData = { comment };
         break;
       default: this.validate(uri, comment);
     }
 
-    if (Object.keys(p.getTableData()).length === 0) {
+    if (!canUpdate) {
       return {};
     }
 
-    p.update(id);
+    const p = new Post({id, ...updatingData})
+      p.update();
 
     return {
       id,
       uri,
       comment
     }
+  }
+
+  public Delete(_, { id }) {
+    const p = new Post({ id })
+    p.delete();
+
+    return {};
   }
 }
