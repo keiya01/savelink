@@ -15,13 +15,13 @@ export default class App {
 
   public getPrivateFunctionForTest = () => {
     return {
-      getFieldData: () => this.getFieldData(),
+      getFieldValue: () => this.getFieldValue(),
       getEscapeKeys: (totalFields: number) => this.getEscapeKeys(totalFields),
       getTemplateUpdatingSQL: () => this.getTemplateUpdatingSQL()
     }
   }
 
-  private getFieldData() {
+  private getFieldValue() {
     const fields = Object.keys(this.tableData);
     const fieldData = fields.reduce((query: any[], field) => {
       return [
@@ -96,7 +96,7 @@ export default class App {
 
   public create() {
     const fields = Object.keys(this.tableData);
-    const fieldValues = this.getFieldData();
+    const fieldValues = this.getFieldValue();
 
     const escapeKeys = this.getEscapeKeys(fields.length);
 
@@ -106,9 +106,12 @@ export default class App {
     client.query(sql, fieldValues).catch(err => console.error(err.stack));
   }
 
-  public update() {
+  public update(id: string) {
     const updateValue = this.getTemplateUpdatingSQL();
-    const fieldData = this.getFieldData();
+    const fieldData = this.getFieldValue();
+
+    // If containing id to tableData it occur error because this.getTemplateUpdatingSQL process id.
+    fieldData.push(id);
 
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length}`;
 
@@ -116,7 +119,10 @@ export default class App {
     client.query(sql, fieldData).catch(err => console.error(err));
   }
 
-  public delete() {
-    
+  public delete(id: string) {
+    const sql = `DELETE FROM ${this.tableName} WHERE id = $1`;
+
+    const client = setDBClient();
+    client.query(sql, [id]);
   }
 }

@@ -86,8 +86,8 @@ export default class PostsHandler extends AppHandler {
       return {};
     }
 
-    const p = new Post({id, ...updatingData})
-      p.update();
+    const p = new Post(updatingData);
+    p.update(id);
 
     return {
       id,
@@ -96,9 +96,9 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  public Delete(_, { id }) {
-    const p = new Post({ id })
-    p.delete();
+  public delete(_, { id }) {
+    const p = new Post();
+    p.delete(id);
 
     return {};
   }
