@@ -98,8 +98,10 @@ export default class PostsHandler extends AppHandler {
 
   public delete(_, { id }) {
     const p = new Post();
+    const postBeforeDeleted = p.findBy("id = $1", [id]);
+
     p.delete(id);
 
-    return {};
+    return postBeforeDeleted;
   }
 }

@@ -24,6 +24,10 @@ export default class App {
   private getFieldValue() {
     const fields = Object.keys(this.tableData);
     const fieldData = fields.reduce((query: any[], field) => {
+      if(!this.tableData[field]) {
+        return query;
+      }
+
       return [
           ...query,
           this.tableData[field]
@@ -49,6 +53,10 @@ export default class App {
 
     return fields.reduce((sql, column, index) => {
       const escapeKey = escapeKeys[index];
+
+      if(!this.tableData[column]) {
+        return sql;
+      }
 
       if(sql === "") {
         return `${column} = ${escapeKey}`;

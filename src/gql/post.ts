@@ -21,7 +21,8 @@ const resolvers = {
   },
   Mutation: {
     createPost: p.create,
-    updatePost: p.update
+    updatePost: p.update,
+    deletePost: p.delete,
   }
 }
 
