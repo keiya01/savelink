@@ -15,7 +15,7 @@ test("Change one object into one array containing two arrays", () => {
 });
 
 describe("Get escape key such as $1 or $2 etc from table data", () => {
-  type tableDataProps = {
+  type TableDataProps = {
     id?: string,
     text?: string,
     created_at?: Date
@@ -24,7 +24,7 @@ describe("Get escape key such as $1 or $2 etc from table data", () => {
   const tests = [
     {
       description: "Get escape key from data property",
-      data: <tableDataProps>{
+      data: <TableDataProps>{
         id: "1",
         text: "test",
         created_at: new Date
@@ -33,7 +33,7 @@ describe("Get escape key such as $1 or $2 etc from table data", () => {
     },
     {
       description: "Check whether this function checks for undefined values",
-      data: {
+      data: <TableDataProps>{
         id: "1",
         text: "check undefined",
       },
