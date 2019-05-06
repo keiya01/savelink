@@ -2,25 +2,43 @@
 
 import App from "../app";
 
-test("Change one object into one array containing two arrays", () => {
-  const tableData = {
-    id: 1,
-    text: "Hello",
-    created_at: new Date
-  }
-  const app = new App("Test", tableData);
+interface TableDataProps {
+  id?: string,
+  text?: string,
+  created_at?: Date
+}
 
-  const { id, text, created_at } = tableData;
-  expect(app.getPrivateFunctionForTest().getFieldValue()).toEqual([id, text, created_at])
+describe("Change one map into one array containing two arrays", () => {
+  const tests = [
+    {
+      description: "Change data map to array",
+      data: <TableDataProps>{
+        id: "1",
+        text: "Hello",
+        created_at: new Date()
+      },
+      result: ["1", "Hello", new Date()]
+    },
+    {
+      description: "Change data map that is include undefined object to array",
+      data: <TableDataProps>{
+        id: "1",
+        created_at: new Date(),
+      },
+      result: ["1", new Date()]
+    }
+  ];
+
+  tests.map(item => {
+    test(item.description, () => {
+      const app = new App("Test", item.data);
+
+      expect(app.getPrivateFunctionForTest().getFieldValue()).toEqual(item.result);
+    });
+  });
 });
 
 describe("Get escape key such as $1 or $2 etc from table data", () => {
-  type TableDataProps = {
-    id?: string,
-    text?: string,
-    created_at?: Date
-  }
-
   const tests = [
     {
       description: "Get escape key from data property",
@@ -39,7 +57,7 @@ describe("Get escape key such as $1 or $2 etc from table data", () => {
       },
       result: ["$1", "$2"],
     }
-  ]
+  ];
 
   tests.map(testData => {
     const { description, data, result } = testData;
@@ -51,15 +69,33 @@ describe("Get escape key such as $1 or $2 etc from table data", () => {
   });
 });
 
-test("Get a template for updating data for SQL", () => {
-  const tableData = {
-    id: 1,
-    text: "Hello",
-    created_at: new Date
-  }
-  const app = new App("Test", tableData);
+describe("Get a template for updating data for SQL", () => {
+  const tests = [
+    {
+      description: "Get a template from data",
+      data: <TableDataProps>{
+        id: "1",
+        text: "test",
+        created_at: new Date
+      },
+      result: "id = $1 text = $2 created_at = $3",
+    },
+    {
+      description: "Get a template from data that is include undefined object",
+      data: <TableDataProps>{
+        id: "1",
+        text: "check undefined",
+      },
+      result: "id = $1 text = $2",
+    }
+  ];
 
-  const field = Object.keys(tableData);
-  expect(app.getPrivateFunctionForTest().getTemplateUpdatingSQL())
-    .toEqual(`${field[0]} = $1 ${field[1]} = $2 ${field[2]} = $3`);
+  tests.map(item => {
+    test(item.description, () => {
+      const app = new App("Test", item.data);
+      
+      expect(app.getPrivateFunctionForTest().getTemplateUpdatingSQL())
+      .toEqual(item.result);
+    });
+  });
 });
