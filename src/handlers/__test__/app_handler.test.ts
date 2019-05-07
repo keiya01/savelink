@@ -2,7 +2,7 @@
 
 import AppHandler from "../app_handler";
 
-describe("Validate uri", () => {
+describe("Validate the uri", () => {
   const tests = [
     {
       description: "Check the uri that have http",
@@ -35,8 +35,13 @@ describe("Validate uri", () => {
       result: false
     },
     {
-      description: "Check the uri Check the uri that don't include .com",
+      description: "Check the uri that don't include .com",
       data: "https://test",
+      result: false
+    },
+    {
+      description: "Check the uri of only one character",
+      data: "h",
       result: false
     }
   ];
@@ -46,5 +51,47 @@ describe("Validate uri", () => {
       const appHandler = new AppHandler();
       expect(appHandler.validateURI(data)).toEqual(result);
     })
+  });
+});
+
+describe("Validate the email", () => {
+  const tests = [
+    {
+      description: "Check the normal email",
+      data: "test@email.com",
+      result: true,
+    },
+    {
+      description: "Check the email that include some extentions",
+      data: "test@email.co.jp",
+      result: true
+    },
+    {
+      description: "Check the email that include some dot",
+      data: "a.b.c.d",
+      result: false,
+    },
+    {
+      description: "Check the email that don't include @",
+      data: "testemail.com",
+      result: false,
+    },
+    {
+      description: "Check the email that don't include extention",
+      data: "test@mail",
+      result: false
+    },
+    {
+      description: "Check the email that don't include extention and @",
+      data: "test",
+      result: false
+    }
+  ]
+
+  tests.map(({description, data, result}) => {
+    test(description, () => {
+      const appHandler = new AppHandler();
+      expect(appHandler.validateEmail(data)).toEqual(result);
+    });
   });
 });
