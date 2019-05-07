@@ -23,5 +23,4 @@ export const resolvers = {
   Mutation: {
     ...post.resolvers.Mutation
   },
-  Post: post.resolvers.Post,
 }
