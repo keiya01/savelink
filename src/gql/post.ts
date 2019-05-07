@@ -19,6 +19,11 @@ const resolvers = {
     posts: p.findAll,
     post: p.findById,
   },
+  Post: {
+    id: post => post.id,
+    uri: post => post.uri,
+    comment: post => post.comment
+  },
   Mutation: {
     createPost: p.create,
     updatePost: p.update,
