@@ -26,18 +26,6 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  private validateID(id: string) {
-    const p = new Post();
-    let canFind = false;
-    p.findBy("id = $1", [id]).then(post => {
-      if (!post) {
-        canFind = false;
-      }
-      canFind = true;
-    });
-    return canFind;
-  }
-
   public findAll() {
     const p = new Post();
     const posts = p.findAll(["*"], { type: "DESC", column: "created_at" });
@@ -71,14 +59,7 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  public update = (_, { id, uri, comment }) => {
-    if (!this.validateID(id)) {
-      throw new UserInputError(`id ${id} not found`, {
-        argument: "id",
-        cause: "not_found"
-      });
-    }
-
+  public update = async (_, { id, uri, comment }) => {
     let canUpdate = false;
     if (uri || comment) {
       canUpdate = true;
@@ -105,7 +86,14 @@ export default class PostsHandler extends AppHandler {
     }
 
     const p = new Post(updatingData);
-    p.update(id);
+
+    const { rowCount } = await p.update(id);
+    if (rowCount === 0) {
+      throw new UserInputError(`id ${id} not found`, {
+        argument: "id",
+        cause: "not_found"
+      });
+    }
 
     return {
       id,
@@ -114,18 +102,17 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  public delete = (_, { id }) => {
-    if (!this.validateID(id)) {
+  public delete = async (_, { id }) => {
+    const p = new Post();
+    const postBeforeDeleted = p.findBy("id = $1", [id]);
+
+    const {rowCount} = await p.delete(id);
+    if (rowCount === 0) {
       throw new UserInputError(`id ${id} not found`, {
         argument: "id",
         cause: "not_found"
       });
     }
-
-    const p = new Post();
-    const postBeforeDeleted = p.findBy("id = $1", [id]);
-
-    p.delete(id);
 
     return postBeforeDeleted;
   }

@@ -124,13 +124,13 @@ export default class App {
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length}`;
 
     const client = setDBClient();
-    client.query(sql, fieldData).catch(err => console.error(err));
+    return client.query(sql, fieldData);
   }
 
   public delete(id: string) {
     const sql = `DELETE FROM ${this.tableName} WHERE id = $1`;
 
     const client = setDBClient();
-    client.query(sql, [id]);
+    return client.query(sql, [id]);
   }
 }
