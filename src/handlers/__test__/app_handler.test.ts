@@ -46,7 +46,7 @@ describe("Validate the uri", () => {
     }
   ];
 
-  tests.map(({description, data, result}) => {
+  tests.map(({ description, data, result }) => {
     test(description, () => {
       const appHandler = new AppHandler();
       expect(appHandler.validateURI(data)).toEqual(result);
@@ -88,10 +88,82 @@ describe("Validate the email", () => {
     }
   ]
 
-  tests.map(({description, data, result}) => {
+  tests.map(({ description, data, result }) => {
     test(description, () => {
       const appHandler = new AppHandler();
       expect(appHandler.validateEmail(data)).toEqual(result);
+    });
+  });
+});
+
+describe("Check whether or not parameter is empty", () => {
+  const tests = [
+    {
+      description: "Check whether parameter is empty",
+      data: {
+        test: "test",
+        hello: "hello"
+      },
+      result: false
+    },
+    {
+      description: "Check whether parameter is undefined",
+      data: undefined,
+      result: true
+    },
+    {
+      description: "Check whether parameter is null",
+      data: null,
+      result: true
+    },
+    {
+      description: "Check whether parameter is string of empty",
+      data: "",
+      result: true
+    },
+    {
+      description: "Check whether parameter is object of empty",
+      data: {},
+      result: false
+    },
+    {
+      description: "Check whether parameter is array of empty",
+      data: [],
+      result: false
+    },
+  ];
+
+  tests.map(({ description, data, result }) => {
+    test(description, () => {
+      const appHandler = new AppHandler();
+      expect(appHandler.checkEmpty(data)).toEqual(result);
+    });
+  });
+});
+
+describe("Check whether or not string type parameter is empty", () => {
+  const tests = [
+    {
+      description: "Check whether string type parameter is empty",
+      data: "test",
+      result: false
+    },
+    {
+      description: "Check whether string type parameter is undefined",
+      data: undefined,
+      result: false
+    },
+    {
+      description: "Check whether string type parameter is string of empty",
+      data: "",
+      result: true
+    }
+  ];
+
+  tests.map(({description, data, result}) => {
+    test(description, () => {
+      const appHandler = new AppHandler();
+      expect(appHandler.checkEmptyString(data)).toEqual(result);
     });
   });
 });

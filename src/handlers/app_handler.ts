@@ -24,7 +24,7 @@ export default class AppHandler {
   }
 
   public checkEmptyString(value?: string) {
-    return value && value === "";
+    return value !== undefined ? value === "" : false;
   }
 
   public checkEmptyGQL(columns: Object) {
