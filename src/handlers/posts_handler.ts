@@ -51,7 +51,10 @@ export default class PostsHandler extends AppHandler {
     this.validate(uri, comment);
 
     const p = new Post({ uri, comment, created_at: new Date });
-    p.create();
+    const err = p.create();
+    if (err) {
+      throw new UserInputError("Data could not save", err);
+    }
 
     return {
       uri,
@@ -106,7 +109,7 @@ export default class PostsHandler extends AppHandler {
     const p = new Post();
     const postBeforeDeleted = p.findBy("id = $1", [id]);
 
-    const {rowCount} = await p.delete(id);
+    const { rowCount } = await p.delete(id);
     if (rowCount === 0) {
       throw new UserInputError(`id ${id} not found`, {
         argument: "id",

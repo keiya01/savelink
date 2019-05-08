@@ -19,11 +19,14 @@ export default class UserHandler extends AppHandler {
     Temporarily set token_id to null.
     After building the server, set token_id to not null in postgreSQL.
   */
-  public create = (_, {username, email}) => {
+  public create = async (_, {username, email}) => {
     this.validate(username, email);
     
     const u = new User({username, email, created_at: new Date()});
-    u.create();
+    const err = await u.create();
+    if(err) {
+      throw new UserInputError("Data could not save", err);
+    }
 
     return {
       username,

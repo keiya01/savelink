@@ -24,14 +24,14 @@ export default class App {
   private getFieldValue() {
     const fields = Object.keys(this.tableData);
     const fieldData = fields.reduce((query: any[], field) => {
-      if(!this.tableData[field]) {
+      if (!this.tableData[field]) {
         return query;
       }
 
       return [
-          ...query,
-          this.tableData[field]
-        ]
+        ...query,
+        this.tableData[field]
+      ]
     }, []);
 
     return fieldData;
@@ -54,16 +54,51 @@ export default class App {
     return fields.reduce((sql, column, index) => {
       const escapeKey = escapeKeys[index];
 
-      if(!this.tableData[column]) {
+      if (!this.tableData[column]) {
         return sql;
       }
 
-      if(sql === "") {
+      if (sql === "") {
         return `${column} = ${escapeKey}`;
       }
 
       return `${sql} ${column} = ${escapeKey}`;
     }, "");
+  }
+
+  private checkErrorMessage(errorMessage: string) {
+    const keys = Object.keys(this.tableData);
+    const errors = [
+      "unique"
+    ];
+
+    for (let i = 0; i < errors.length; i++) {
+      const error = errors[i];
+      if (errorMessage.includes(error)) {
+        const errorKey = keys.reduce((errorKey, key) => {
+          if (errorMessage.includes(key)) {
+            return key;
+          }
+
+          if (errorKey !== "") {
+            return errorKey;
+          }
+
+          return "";
+        }, "");
+
+        return {
+          key: errorKey,
+          value: this.tableData[errorKey],
+          type: error
+        };
+      }
+    }
+
+    return {
+      key: null,
+      type: "db_error"
+    };
   }
 
   public async findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
@@ -81,7 +116,7 @@ export default class App {
 
     const data = await client.query(sql).catch((err) => console.error(err.stack));
 
-    if(!data) {
+    if (!data) {
       return [];
     }
 
@@ -92,27 +127,35 @@ export default class App {
     const sql = `SELECT * FROM ${this.tableName} WHERE ${where}`;
 
     const client = setDBClient();
-    
+
     const data = await client.query(sql, values).catch(err => console.error(err));
 
-    if(!data) {
+    if (!data) {
       return null;
     }
 
     return data.rows[0];
   }
 
-  public create() {
+  public create = async () => {
     const fields = Object.keys(this.tableData);
     const fieldValues = this.getFieldValue();
 
     const escapeKeys = this.getEscapeKeys(fields.length);
 
     const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
-    
+
     const client = setDBClient();
 
-    client.query(sql, fieldValues).catch(err => console.error(err));
+    let error: Object | null = null;
+    try {
+      await client.query(sql, fieldValues)
+    } catch (err) {
+      error = this.checkErrorMessage(err.stack);
+      console.error(err.stack);
+    }
+
+    return error;
   }
 
   public update(id: string) {
