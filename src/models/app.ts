@@ -69,7 +69,7 @@ export default class App {
   public checkErrorMessage = (errorMessage: string) => {
     const keys = Object.keys(this.tableData);
     const errors = [
-      "unique"
+      "unique",
     ];
 
     for (let i = 0; i < errors.length; i++) {
@@ -101,7 +101,7 @@ export default class App {
     };
   }
 
-  public async findAll(columns: string[], _order?: { type: "ASC" | "DESC", column: string }) {
+  public findAll = (columns: string[], _order?: { type: "ASC" | "DESC", column: string }) => {
     let order = _order;
     if (!order) {
       order = {
@@ -114,27 +114,15 @@ export default class App {
 
     const client = setDBClient();
 
-    const data = await client.query(sql).catch((err) => console.error(err.stack));
-
-    if (!data) {
-      return [];
-    }
-
-    return data.rows;
+    return client.query(sql);
   }
 
-  public async findBy(where: string, values: any[]) {
+  public findBy = (where: string, values: any[]) => {
     const sql = `SELECT * FROM ${this.tableName} WHERE ${where}`;
 
     const client = setDBClient();
 
-    const data = await client.query(sql, values).catch(err => console.error(err));
-
-    if (!data) {
-      return null;
-    }
-
-    return data.rows[0];
+    return client.query(sql, values);
   }
 
   public create = () => {
@@ -150,7 +138,7 @@ export default class App {
     return client.query(sql, fieldValues);
   }
 
-  public update(id: string) {
+  public update = (id: string) => {
     const updateValue = this.getTemplateUpdatingSQL();
     const fieldData = this.getFieldValue();
 

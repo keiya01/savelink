@@ -8,8 +8,9 @@ export default class UserHandler extends AppHandler {
 
     if(email && !this.validateEmail) {
       throw new UserInputError(`This email is invalid: ${email}`, {
-        argument: "email",
-        cause: "invalid",
+        key: "email",
+        value: email,
+        type: "invalid",
       });
     }
   }
@@ -32,9 +33,7 @@ export default class UserHandler extends AppHandler {
       console.error(stack);
     }
 
-    if(err) {
-      throw new UserInputError("Data could not save", err);
-    }
+    this.checkDatabaseError(err);
 
     return {
       username,

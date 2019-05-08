@@ -1,48 +1,83 @@
-import Post, { PostModelProps } from "../models/post";
+import Post, { PostModel } from "../models/post";
 import AppHandler from "./app_handler";
 import { UserInputError } from "apollo-server-hapi";
+import { QueryResult } from "pg";
 
 export default class PostsHandler extends AppHandler {
   private validate(uri?: string, comment?: string) {
     if (uri === "") {
       throw new UserInputError(`URI can not be empty`, {
-        argument: "uri",
-        cause: "empty"
+        key: "uri",
+        value: uri,
+        type: "empty"
       });
     }
 
     if (uri && !this.validateURI(uri)) {
       throw new UserInputError(`This value can not be used: ${uri}`, {
-        argument: "uri",
-        cause: "format"
+        key: "uri",
+        value: uri,
+        type: "format"
       });
     }
 
     if (comment === "") {
       throw new UserInputError(`Comment can not be empty`, {
-        argument: "comment",
-        cause: "empty"
+        key: "comment",
+        value: comment,
+        type: "empty"
       });
     }
   }
 
-  public findAll() {
+  public findAll = async () => {
     const p = new Post();
-    const posts = p.findAll(["*"], { type: "DESC", column: "created_at" });
+
+    let postData: QueryResult | null = null;
+    let err: Object | null = null;
+    try {
+      postData = await p.findAll(["*"], { type: "DESC", column: "created_at" });
+    } catch({stack}) {
+      err = p.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    let posts: PostModel[] | null = null;
+    if(postData && postData.rows) {
+      posts = postData.rows;
+    }
+
+    this.checkDatabaseError(err);
 
     return posts;
   }
 
-  public findById(_, { id }) {
-    if (id === "0") {
+  public findById = async (_, { id }) => {
+    if (id === "0" || id === "") {
       throw new UserInputError(`This value can not used: ${id}`, {
-        argument: "id",
-        cause: "zero"
-      })
+        key: "id",
+        value: id,
+        type: "syntax"
+      });
     }
 
     const p = new Post();
-    const post = p.findBy("id = $1", [id]);
+    
+    let postData: QueryResult | null = null;
+    let err: Object | null = null;
+    try {
+      postData = await p.findBy("id = $1", [id]);
+    } catch({stack}) {
+      err = p.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    let post: PostModel | null = null;
+    if(postData && postData.rows[0]) {
+      post = postData.rows[0];
+    }
+
+    this.checkDatabaseError(err);
 
     return post;
   }
@@ -60,9 +95,7 @@ export default class PostsHandler extends AppHandler {
       console.error(stack);
     }
 
-    if (err) {
-      throw new UserInputError("Data could not save", err);
-    }
+    this.checkDatabaseError(err);
 
     return {
       uri,
@@ -76,7 +109,7 @@ export default class PostsHandler extends AppHandler {
       canUpdate = true;
     }
 
-    let updatingData: PostModelProps = {};
+    let updatingData: PostModel = {};
     switch (true) {
       case !this.checkEmptyString(uri) && !this.checkEmptyString(comment):
         this.validate(uri, comment);
@@ -98,11 +131,22 @@ export default class PostsHandler extends AppHandler {
 
     const p = new Post(updatingData);
 
-    const { rowCount } = await p.update(id);
-    if (rowCount === 0) {
+    let postData: QueryResult | null = null;
+    let err: Object | null = null;
+    try {
+      postData = await p.update(id);
+    } catch({stack}) {
+      err = p.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    this.checkDatabaseError(err);
+
+    if (postData && postData.rowCount === 0) {
       throw new UserInputError(`id ${id} not found`, {
-        argument: "id",
-        cause: "not_found"
+        key: "id",
+        value: id,
+        type: "not_found"
       });
     }
 
@@ -120,8 +164,9 @@ export default class PostsHandler extends AppHandler {
     const { rowCount } = await p.delete(id);
     if (rowCount === 0) {
       throw new UserInputError(`id ${id} not found`, {
-        argument: "id",
-        cause: "not_found"
+        key: "id",
+        value: id,
+        type: "not_found"
       });
     }
 

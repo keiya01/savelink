@@ -34,10 +34,17 @@ export default class AppHandler {
       const item = columns[key];
       if(this.checkEmptyString(item)) {
         throw new UserInputError(`${key} is can not empty`, {
-          argument: key,
-          cause: "empty"
+          key,
+          value: columns[key],
+          type: "empty"
         });
       }
     });
+  }
+
+  public checkDatabaseError(err: Object | null) {
+    if (err) {
+      throw new UserInputError("Data could not save", err);
+    }
   }
 }

@@ -1,13 +1,13 @@
 import App from "./app";
 
-export interface PostModelProps {
+export interface PostModel {
   id?: string,
   uri?: string,
   comment?: string,
   created_at?: Date
 }
 export default class Post extends App {
-  constructor(post?: PostModelProps) {
+  constructor(post?: PostModel) {
     if (!post) {
       super("posts", {});
       return;
