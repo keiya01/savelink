@@ -66,7 +66,7 @@ export default class App {
     }, "");
   }
 
-  private checkErrorMessage(errorMessage: string) {
+  public checkErrorMessage = (errorMessage: string) => {
     const keys = Object.keys(this.tableData);
     const errors = [
       "unique"
@@ -137,7 +137,7 @@ export default class App {
     return data.rows[0];
   }
 
-  public create = async () => {
+  public create = () => {
     const fields = Object.keys(this.tableData);
     const fieldValues = this.getFieldValue();
 
@@ -147,15 +147,7 @@ export default class App {
 
     const client = setDBClient();
 
-    let error: Object | null = null;
-    try {
-      await client.query(sql, fieldValues)
-    } catch (err) {
-      error = this.checkErrorMessage(err.stack);
-      console.error(err.stack);
-    }
-
-    return error;
+    return client.query(sql, fieldValues);
   }
 
   public update(id: string) {

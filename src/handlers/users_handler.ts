@@ -23,7 +23,15 @@ export default class UserHandler extends AppHandler {
     this.validate(username, email);
     
     const u = new User({username, email, created_at: new Date()});
-    const err = await u.create();
+
+    let err: Object | null = null;
+    try {
+      await u.create();
+    } catch({stack}) {
+      err = u.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
     if(err) {
       throw new UserInputError("Data could not save", err);
     }

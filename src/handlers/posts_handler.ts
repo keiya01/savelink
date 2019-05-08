@@ -47,11 +47,19 @@ export default class PostsHandler extends AppHandler {
     return post;
   }
 
-  public create = (_, { uri, comment }) => {
+  public create = async (_, { uri, comment }) => {
     this.validate(uri, comment);
 
     const p = new Post({ uri, comment, created_at: new Date });
-    const err = p.create();
+
+    let err: Object | null = null;
+    try {
+      await p.create();
+    } catch({stack}) {
+      err = p.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
     if (err) {
       throw new UserInputError("Data could not save", err);
     }
