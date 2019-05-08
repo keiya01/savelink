@@ -1,6 +1,7 @@
 import AppHandler from "./app_handler";
 import { UserInputError } from "apollo-server-core";
 import User from "../models/user";
+import { ERROR_TYPE } from "../constants/error";
 
 export default class UserHandler extends AppHandler {
   private validate(username?: string, email?: string, token_id?: string) {
@@ -10,7 +11,7 @@ export default class UserHandler extends AppHandler {
       throw new UserInputError(`This email is invalid: ${email}`, {
         key: "email",
         value: email,
-        type: "invalid",
+        type: ERROR_TYPE.Format,
       });
     }
   }

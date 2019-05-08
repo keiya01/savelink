@@ -2,6 +2,7 @@ import Post, { PostModel } from "../models/post";
 import AppHandler from "./app_handler";
 import { UserInputError } from "apollo-server-hapi";
 import { QueryResult } from "pg";
+import { ERROR_TYPE } from "../constants/error";
 
 export default class PostsHandler extends AppHandler {
   private validate(uri?: string, comment?: string) {
@@ -9,7 +10,7 @@ export default class PostsHandler extends AppHandler {
       throw new UserInputError(`URI can not be empty`, {
         key: "uri",
         value: uri,
-        type: "empty"
+        type: ERROR_TYPE.Empty
       });
     }
 
@@ -17,7 +18,7 @@ export default class PostsHandler extends AppHandler {
       throw new UserInputError(`This value can not be used: ${uri}`, {
         key: "uri",
         value: uri,
-        type: "format"
+        type: ERROR_TYPE.Format
       });
     }
 
@@ -25,7 +26,7 @@ export default class PostsHandler extends AppHandler {
       throw new UserInputError(`Comment can not be empty`, {
         key: "comment",
         value: comment,
-        type: "empty"
+        type: ERROR_TYPE.Empty
       });
     }
   }
@@ -57,7 +58,7 @@ export default class PostsHandler extends AppHandler {
       throw new UserInputError(`This value can not used: ${id}`, {
         key: "id",
         value: id,
-        type: "syntax"
+        type: ERROR_TYPE.Syntax
       });
     }
 
@@ -146,7 +147,7 @@ export default class PostsHandler extends AppHandler {
       throw new UserInputError(`id ${id} not found`, {
         key: "id",
         value: id,
-        type: "not_found"
+        type: ERROR_TYPE.Not_Found
       });
     }
 
@@ -166,7 +167,7 @@ export default class PostsHandler extends AppHandler {
       throw new UserInputError(`id ${id} not found`, {
         key: "id",
         value: id,
-        type: "not_found"
+        type: ERROR_TYPE.Not_Found
       });
     }
 

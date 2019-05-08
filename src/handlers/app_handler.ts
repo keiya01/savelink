@@ -1,4 +1,5 @@
 import { UserInputError } from "apollo-server-core";
+import { ERROR_TYPE } from "../constants/error";
 
 export default class AppHandler {
   public validateURI(uri: string) {
@@ -36,7 +37,7 @@ export default class AppHandler {
         throw new UserInputError(`${key} is can not empty`, {
           key,
           value: columns[key],
-          type: "empty"
+          type: ERROR_TYPE.Empty
         });
       }
     });
