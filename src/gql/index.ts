@@ -1,5 +1,6 @@
 import { gql } from "apollo-server-hapi";
 import post from "./post";
+import user from "./user";
 
 export const typeDefs = gql`
   type Query {
@@ -14,13 +15,16 @@ export const typeDefs = gql`
   }
   
   ${post.typeDef}
+  ${user.typeDefs}
 `;
 
 export const resolvers = {
   Query: {
-    ...post.resolvers.Query
+    ...post.resolvers.Query,
+    ...user.resolvers.Query
   },
   Mutation: {
-    ...post.resolvers.Mutation
+    ...post.resolvers.Mutation,
+    ...user.resolvers.Mutation
   },
 }

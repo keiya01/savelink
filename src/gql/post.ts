@@ -1,5 +1,4 @@
 import postsHandler  from "../handlers/posts_handler";
-import {  } from "apollo-server-hapi";
 
 // TODO: Implement created_at column.
 // Date type must be defined by custom scalars. 
@@ -26,9 +25,7 @@ const resolvers = {
   }
 }
 
-const gql = {
+export default {
   typeDef,
   resolvers
 }
-
-export default gql;
