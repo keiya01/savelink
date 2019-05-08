@@ -1,7 +1,7 @@
 import UserHandler from "../handlers/users_handler";
 
 const typeDefs = `
-  User {
+  type User {
     id: String
     username: String
     email: String
@@ -14,7 +14,7 @@ const u = new UserHandler();
 const resolvers = {
   Query: {},
   Mutation: {
-    create: u.create
+    createUser: u.create
   }
 }
 

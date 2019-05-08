@@ -12,6 +12,7 @@ export const typeDefs = gql`
     createPost(uri: String!, comment: String): Post
     updatePost(id: ID!, uri: String, comment: String): Post
     deletePost(id: ID!): Post
+    createUser(username: String!, email: String!, token_id: String): User
   }
   
   ${post.typeDef}

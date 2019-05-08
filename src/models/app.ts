@@ -111,7 +111,8 @@ export default class App {
     const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
     
     const client = setDBClient();
-    client.query(sql, fieldValues).catch(err => console.error(err.stack));
+
+    client.query(sql, fieldValues).catch(err => console.error(err));
   }
 
   public update(id: string) {
