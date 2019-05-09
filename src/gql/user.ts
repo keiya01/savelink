@@ -14,7 +14,8 @@ const u = new UserHandler();
 const resolvers = {
   Query: {},
   Mutation: {
-    createUser: u.create
+    createUser: u.create,
+    loginUser: u.login
   }
 }
 
