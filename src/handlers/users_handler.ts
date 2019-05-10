@@ -39,6 +39,7 @@ export default class UserHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(u.getTableData(), userData);
 
     let user: UserModel | null = null;
     if (userData) {
@@ -65,6 +66,7 @@ export default class UserHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(u.getTableData(), userData);
 
     let user: UserModel | null = null;
     if (userData) {
@@ -89,6 +91,7 @@ export default class UserHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(u.getTableData(), userData);
 
     let user: UserModel | null = null;
     if (userData) {
@@ -128,6 +131,7 @@ export default class UserHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(u.getTableData(), userData);
 
     let user: UserModel | null = null;
     if (userData) {
