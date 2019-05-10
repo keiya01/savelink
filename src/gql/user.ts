@@ -12,10 +12,12 @@ const typeDefs = `
 const u = new UserHandler();
 
 const resolvers = {
-  Query: {},
+  Query: {
+    user: u.findBy
+  },
   Mutation: {
     createUser: u.create,
-    loginUser: u.login
+    loginUser: u.login,
   }
 }
 

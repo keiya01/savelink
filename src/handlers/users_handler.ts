@@ -68,4 +68,34 @@ export default class UserHandler extends AppHandler {
 
     return user;
   }
+
+  public findBy =  async (_, {id}) => {
+    if(this.checkEmpty(id)) {
+      throw new UserInputError("id can not empty", {
+        key: "id",
+        value: "",
+        type: ERROR_TYPE.Empty
+      });
+    }
+
+    const u = new User({id});
+
+    let userData: QueryResult | null = null;
+    let err: Object | null  = null;
+    try {
+      userData = await u.findBy("id = $1", [id]);
+    } catch({stack}) {
+      err = u.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    this.checkDatabaseError(err);
+
+    let user: UserModel | null = null;
+    if(userData && userData.rows[0]) {
+      user = userData.rows[0];
+    }
+
+    return user
+  }
 }
