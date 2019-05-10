@@ -79,10 +79,11 @@ export default class PostsHandler extends AppHandler {
     return post;
   }
 
-  public create = async (_, { uri, comment }) => {
+  public create = async (_, { uri, comment, user_id }) => {
+    this.validateId(user_id);
     this.validate({uri, comment});
 
-    const p = new Post({ uri, comment, created_at: new Date });
+    const p = new Post({ uri, comment, user_id, created_at: new Date });
 
     let err: Object | null = null;
     try {

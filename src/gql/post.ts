@@ -7,7 +7,8 @@ import postsHandler  from "../handlers/posts_handler";
   type Post {
     id: ID
     uri: String
-    comment: String
+    comment: String,
+    user_id: ID
   }
 `;
 
