@@ -45,12 +45,12 @@ export default class PostsHandler extends AppHandler {
       console.error(stack);
     }
 
+    this.validateDatabaseError(err);
+    
     let posts: PostModel[] | null = null;
-    if (postData && postData.rows) {
+    if (postData) {
       posts = postData.rows;
     }
-
-    this.validateDatabaseError(err);
 
     return posts;
   }
@@ -69,12 +69,12 @@ export default class PostsHandler extends AppHandler {
       console.error(stack);
     }
 
+    this.validateDatabaseError(err);
+    
     let post: PostModel | null = null;
-    if (postData && postData.rows[0]) {
+    if (postData) {
       post = postData.rows[0];
     }
-
-    this.validateDatabaseError(err);
 
     return post;
   }
@@ -96,18 +96,10 @@ export default class PostsHandler extends AppHandler {
 
     this.validateDatabaseError(err);
 
-    if(!postData || postData.rowCount === 0) {
-      const tables = p.getTableData();
-      const keys = Object.keys(tables);
-
-      throw new UserInputError("Could not save data. Please check entered value", {
-        keys,
-        value: tables,
-        type: ERROR_TYPE.Not_Found
-      });
+    let post: PostModel | null = null;
+    if (postData) {
+      post = postData.rows[0];
     }
-
-    const post = postData.rows[0];
 
     return post;
   }
@@ -139,15 +131,10 @@ export default class PostsHandler extends AppHandler {
 
     this.validateDatabaseError(err);
 
-    if (!postData || postData.rowCount === 0) {
-      throw new UserInputError(`id ${id} not found`, {
-        key: "id",
-        value: id,
-        type: ERROR_TYPE.Not_Found
-      });
+    let post: PostModel | null = null;
+    if (postData) {
+      post = postData.rows[0];
     }
-
-    const post = postData.rows[0];
 
     return post;
   }
@@ -156,17 +143,17 @@ export default class PostsHandler extends AppHandler {
     this.validateId(id);
 
     const p = new Post();
-    const postBeforeDeleted = p.findBy("id = $1", [id]);
 
-    const { rowCount } = await p.delete(id);
-    if (rowCount === 0) {
-      throw new UserInputError(`id ${id} not found`, {
-        key: "id",
-        value: id,
-        type: ERROR_TYPE.Not_Found
-      });
+    let err: Object | null = null;
+    try {
+      await p.delete(id);
+    } catch({stack}) {
+      err = p.checkErrorMessage(stack);
+      console.error(stack);
     }
 
-    return postBeforeDeleted;
+    this.validateDatabaseError(err);
+
+    return null;
   }
 }
