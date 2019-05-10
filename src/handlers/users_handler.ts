@@ -36,8 +36,8 @@ export default class UserHandler extends AppHandler {
     }
     if (Object.keys(updateParameters).length === 0) {
       throw new UserInputError("Please input value", {
-        key: "",
-        value: "",
+        keys: ["email", "username"],
+        values: {email,username},
         type: ERROR_TYPE.Empty
       });
     }
@@ -149,11 +149,16 @@ export default class UserHandler extends AppHandler {
       console.error(stack);
     }
 
+
     this.checkDatabaseError(err);
 
     let user: UserModel | null = null;
-    if (userData && userData.rowCount !== 0) {
-      user = userData.rows[0];
+    if (userData && userData.rowCount === 0) {
+      // TODO: Add token_id to values that is second argument for UserInputError
+      throw new UserInputError(`id ${id} can not update. Please check input value`, {
+        keys: ["id", "email", "username", "token_id"],
+        values: {id, email, username}
+      })
     }
 
     return user;

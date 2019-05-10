@@ -49,8 +49,8 @@ describe("Check that setUpdateParameters function set updateing postgreSQL data"
         username: ""
       },
       result: new UserInputError("Please input value", {
-        key: "",
-        value: "",
+        keys: ["email", "username"],
+        values: {email: "", username: ""},
         type: ERROR_TYPE.Empty
       }),
       isError: true
