@@ -86,8 +86,9 @@ export default class PostsHandler extends AppHandler {
     const p = new Post({ uri, comment, user_id, created_at: new Date });
 
     let err: Object | null = null;
+    let postData: QueryResult | null = null;
     try {
-      await p.create();
+      postData = await p.create(true);
     } catch ({ stack }) {
       err = p.checkErrorMessage(stack);
       console.error(stack);
@@ -95,10 +96,20 @@ export default class PostsHandler extends AppHandler {
 
     this.validateDatabaseError(err);
 
-    return {
-      uri,
-      comment
+    if(!postData || postData.rowCount === 0) {
+      const tables = p.getTableData();
+      const keys = Object.keys(tables);
+
+      throw new UserInputError("Could not save data. Please check entered value", {
+        keys,
+        value: tables,
+        type: ERROR_TYPE.Not_Found
+      });
     }
+
+    const post = postData.rows[0];
+
+    return post;
   }
 
   public update = async (_, { id, uri, comment }) => {

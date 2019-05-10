@@ -140,13 +140,18 @@ export default class App {
     return client.query(sql, values);
   }
 
-  public create = () => {
+  public create = (isReturn?: boolean) => {
     const fields = Object.keys(this.tableData);
     const fieldValues = this.getFieldValue();
 
     const escapeKeys = this.getEscapeKeys(fields.length);
 
-    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()});`;
+    let returningSyntax = "";
+    if(isReturn) {
+      returningSyntax = `RETURNING ${fields.join()}`
+    }
+
+    const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()}) ${returningSyntax};`;
 
     const client = setDBClient();
 
