@@ -2,7 +2,7 @@ import { UserInputError } from "apollo-server-core";
 import { ERROR_TYPE } from "../constants/error";
 
 export default class AppHandler {
-  public validateURI(uri: string) {
+  public checkURI(uri: string) {
     const isMatch = uri.match(/http(s)?:\/\/(www\.)?[-a-zA-Z0-9@:%.+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%+.~#?&//=]*)/g);
     if (isMatch === null) {
       return false;
@@ -11,7 +11,7 @@ export default class AppHandler {
     return true;
   }
 
-  public validateEmail(email: string) {
+  public checkEmail(email: string) {
     const isMatch = email.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
     if (isMatch === null) {
       return false;
@@ -28,7 +28,17 @@ export default class AppHandler {
     return value !== undefined ? value === "" : false;
   }
 
-  public checkEmptyGQL(columns: Object) {
+  public validateId(id: string | number) {
+    if (id === 0 || id === "0" || id === "") {
+      throw new UserInputError(`This value can not be used: ${id}`, {
+        key: "id",
+        value: id,
+        type: ERROR_TYPE.Syntax
+      });
+    }
+  }
+
+  public validateEmptyGQL(columns: Object) {
     const keys = Object.keys(columns);
 
     keys.map(key => {
@@ -43,7 +53,7 @@ export default class AppHandler {
     });
   }
 
-  public checkDatabaseError(err: Object | null) {
+  public validateDatabaseError(err: Object | null) {
     if (err) {
       throw new UserInputError("Data could not save", err);
     }

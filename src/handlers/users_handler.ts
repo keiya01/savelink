@@ -8,9 +8,9 @@ export default class UserHandler extends AppHandler {
   private validate(user: { email?: string, token_id?: string, username?: string }) {
     const { email, token_id, username } = user;
 
-    this.checkEmptyGQL({ username, email, token_id });
+    this.validateEmptyGQL({ username, email, token_id });
 
-    if (email && !this.validateEmail(email)) {
+    if (email && !this.checkEmail(email)) {
       throw new UserInputError(`This email is invalid: ${email}`, {
         key: "email",
         value: email,
@@ -37,7 +37,7 @@ export default class UserHandler extends AppHandler {
       console.error(stack);
     }
 
-    this.checkDatabaseError(err);
+    this.validateDatabaseError(err);
 
     return {
       username,
@@ -61,7 +61,7 @@ export default class UserHandler extends AppHandler {
       console.error(stack);
     }
 
-    this.checkDatabaseError(err);
+    this.validateDatabaseError(err);
 
     let user: UserModel | null = null;
     if (userData && userData.rows[0]) {
@@ -72,7 +72,7 @@ export default class UserHandler extends AppHandler {
   }
 
   public findBy = async (_, { id }) => {
-    this.checkEmptyGQL({ id });
+    this.validateId(id);
 
     const u = new User({ id });
 
@@ -85,7 +85,7 @@ export default class UserHandler extends AppHandler {
       console.error(stack);
     }
 
-    this.checkDatabaseError(err);
+    this.validateDatabaseError(err);
 
     let user: UserModel | null = null;
     if (userData && userData.rows[0]) {
@@ -99,12 +99,12 @@ export default class UserHandler extends AppHandler {
   // Because use token_id to authenticate the user
   update = async (_, { id, username, email }) => {
     // id is require
-    this.checkEmptyGQL({ id });
+    this.validateId(id);
 
     // Check parameters one by one and update items one by one
     let updateValue = this.setUpdateParameters({ email, username }, (table: Object) => {
       const columns = Object.keys(table);
-      throw new UserInputError("Please input value", {
+      throw new UserInputError("Please enter a value in the form", {
         keys: columns,
         values: table,
         type: ERROR_TYPE.Empty
@@ -124,7 +124,7 @@ export default class UserHandler extends AppHandler {
       console.error(stack);
     }
 
-    this.checkDatabaseError(err);
+    this.validateDatabaseError(err);
 
     if (!userData || userData.rowCount === 0) {
       // TODO: Add token_id to values that is second argument for UserInputError
