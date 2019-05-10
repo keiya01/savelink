@@ -30,8 +30,9 @@ export default class UserHandler extends AppHandler {
     const u = new User({ username, email, created_at: new Date() });
 
     let err: Object | null = null;
+    let userData: QueryResult | null = null;
     try {
-      await u.create();
+      userData = await u.create(true);
     } catch ({ stack }) {
       err = u.checkErrorMessage(stack);
       console.error(stack);
@@ -39,10 +40,12 @@ export default class UserHandler extends AppHandler {
 
     this.validateDatabaseError(err);
 
-    return {
-      username,
-      email,
+    let user: UserModel | null = null;
+    if (userData) {
+      user = userData.rows[0];
     }
+
+    return user;
   }
 
   // TODO: Add token_id to parameter
@@ -64,7 +67,7 @@ export default class UserHandler extends AppHandler {
     this.validateDatabaseError(err);
 
     let user: UserModel | null = null;
-    if (userData && userData.rows[0]) {
+    if (userData) {
       user = userData.rows[0];
     }
 
@@ -88,7 +91,7 @@ export default class UserHandler extends AppHandler {
     this.validateDatabaseError(err);
 
     let user: UserModel | null = null;
-    if (userData && userData.rows[0]) {
+    if (userData) {
       user = userData.rows[0];
     }
 
@@ -126,16 +129,11 @@ export default class UserHandler extends AppHandler {
 
     this.validateDatabaseError(err);
 
-    if (!userData || userData.rowCount === 0) {
-      // TODO: Add token_id to values that is second argument for UserInputError
-      throw new UserInputError(`id ${id} can not update. Please check input value`, {
-        keys: ["id", "email", "username", "token_id"],
-        values: { id, email, username }
-      })
+    let user: UserModel | null = null;
+    if (userData) {
+      user = userData.rows[0];
     }
 
-    const updatedUser = userData.rows[0];
-
-    return updatedUser;
+    return user;
   }
 }
