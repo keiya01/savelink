@@ -7,6 +7,9 @@ This app that is to save URI.
 - Apollo
 - PostgreSQL
 
+### Test
+- jest
+
 ### tools
 - ESlint
 - lint-staged
