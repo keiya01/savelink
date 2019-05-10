@@ -60,7 +60,6 @@ export default class App {
 
   private getReturningSyntax = (isReturn?: boolean) => {
     const DBColumn = Object.keys(this.tableData);
-    console.log(DBColumn)
     if (DBColumn.length === 0) {
       return "";
     }

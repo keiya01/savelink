@@ -19,38 +19,6 @@ export default class UserHandler extends AppHandler {
     }
   }
 
-  private setUpdateParameters = (email: string, username: string) => {
-    // Check parameters one by one and update items one by one
-    let updateParameters: Object = {};
-    if (!this.checkEmptyString(email)) {
-      updateParameters = {
-        ...updateParameters,
-        email
-      }
-    }
-    if (!this.checkEmptyString(username)) {
-      updateParameters = {
-        ...updateParameters,
-        username
-      }
-    }
-    if (Object.keys(updateParameters).length === 0) {
-      throw new UserInputError("Please input value", {
-        keys: ["email", "username"],
-        values: { email, username },
-        type: ERROR_TYPE.Empty
-      });
-    }
-
-    return updateParameters
-  }
-
-  public getPrivateFunctionForTest = () => {
-    return {
-      setUpdateParameters: this.setUpdateParameters
-    }
-  }
-
   /*
     TODO
     Temporarily set token_id to null.
@@ -134,7 +102,14 @@ export default class UserHandler extends AppHandler {
     this.checkEmptyGQL({ id });
 
     // Check parameters one by one and update items one by one
-    let updateValue = this.setUpdateParameters(email, username);
+    let updateValue = this.setUpdateParameters({ email, username }, (table: Object) => {
+      const columns = Object.keys(table);
+      throw new UserInputError("Please input value", {
+        keys: columns,
+        values: table,
+        type: ERROR_TYPE.Empty
+      });
+    });
 
     this.validate(updateValue);
 
