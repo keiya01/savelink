@@ -93,9 +93,70 @@ describe("Get a template for updating data for SQL", () => {
   tests.map(item => {
     test(item.description, () => {
       const app = new App("Test", item.data);
-      
+
       expect(app.getPrivateFunctionForTest().getTemplateUpdatingSQL())
-      .toEqual(item.result);
+        .toEqual(item.result);
+    });
+  });
+});
+
+
+describe("Check getReturningSyntax function that get RETURNING syntax for postgreSQL", () => {
+  const tests = [
+    {
+      description: "Check whether function can get syntax that include 3 values",
+      data: {
+        tableData: {
+          id: "1",
+          username: "test",
+          email: "test@mail.com"
+        },
+        argument: true
+      },
+      result: "RETURNING id,username,email",
+    },
+    {
+      description: "Check whether function can get syntax that include 2 values",
+      data: {
+        tableData: {
+          id: "1",
+          email: "test@mail.com"
+        },
+        argument: true
+      },
+      result: "RETURNING id,email"
+    },
+    {
+      description: "Check whether function can get syntax that include 1 values",
+      data: {
+        tableData: { id: "1" },
+        argument: true
+      },
+      result: "RETURNING id"
+    },
+    {
+      description: "Check whether function can get syntax that include 0 values",
+      data: {
+        tableData: {},
+        argument: true
+      },
+      result: ""
+    },
+    {
+      description: "Check whether empty string is returned when argument is false",
+      data: {
+        tableData: {},
+        argument: false
+      },
+      result: ""
+    },
+  ];
+
+  tests.map(({ description, data, result }) => {
+    test(description, () => {
+      const app = new App("Test", data.tableData);
+      expect(app.getPrivateFunctionForTest().getReturningSyntax(data.argument))
+        .toEqual(result);
     });
   });
 });

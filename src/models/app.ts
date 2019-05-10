@@ -13,15 +13,7 @@ export default class App {
     return this.tableData;
   }
 
-  public getPrivateFunctionForTest = () => {
-    return {
-      getFieldValue: () => this.getFieldValue(),
-      getEscapeKeys: (totalFields: number) => this.getEscapeKeys(totalFields),
-      getTemplateUpdatingSQL: () => this.getTemplateUpdatingSQL()
-    }
-  }
-
-  private getFieldValue() {
+  private getFieldValue = () => {
     const fields = Object.keys(this.tableData);
     const fieldData = fields.reduce((query: any[], field) => {
       if (!this.tableData[field]) {
@@ -37,7 +29,7 @@ export default class App {
     return fieldData;
   }
 
-  private getEscapeKeys(totalFields: number) {
+  private getEscapeKeys = (totalFields: number) => {
     const escapeKeys: string[] = [];
     for (let i = 1; i <= totalFields; i++) {
       const escapeKey = `$${i}`;
@@ -47,7 +39,7 @@ export default class App {
     return escapeKeys;
   }
 
-  private getTemplateUpdatingSQL() {
+  private getTemplateUpdatingSQL = () => {
     const fields = Object.keys(this.tableData);
     const escapeKeys = this.getEscapeKeys(fields.length);
 
@@ -64,6 +56,29 @@ export default class App {
 
       return `${sql}, ${column} = ${escapeKey}`;
     }, "");
+  }
+
+  private getReturningSyntax = (isReturn: boolean) => {
+    const DBColumn = Object.keys(this.tableData);
+    if (DBColumn.length === 0) {
+      return "";
+    }
+    
+    let returningClause = "";
+    if (isReturn) {
+      returningClause = `RETURNING ${DBColumn.join()}`
+    }
+
+    return returningClause;
+  }
+
+  public getPrivateFunctionForTest = () => {
+    return {
+      getFieldValue: this.getFieldValue,
+      getEscapeKeys: this.getEscapeKeys,
+      getTemplateUpdatingSQL: this.getTemplateUpdatingSQL,
+      getReturningSyntax: this.getReturningSyntax
+    }
   }
 
   public checkErrorMessage = (errorMessage: string) => {
@@ -138,14 +153,19 @@ export default class App {
     return client.query(sql, fieldValues);
   }
 
-  public update = (id: string) => {
+  public update = (id: string, isReturn?: boolean) => {
     const updateValue = this.getTemplateUpdatingSQL();
     const fieldData = this.getFieldValue();
 
     // If containing id to tableData it occur error because this.getTemplateUpdatingSQL process id.
     fieldData.push(id);
 
-    const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length}`;
+    let returningClause = "";
+    if (isReturn) {
+      returningClause = `RETURNING ${Object.keys(this.tableData).join()}`
+    }
+
+    const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause}`;
 
     const client = setDBClient();
     return client.query(sql, fieldData);
