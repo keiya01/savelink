@@ -58,8 +58,9 @@ export default class App {
     }, "");
   }
 
-  private getReturningSyntax = (isReturn: boolean) => {
+  private getReturningSyntax = (isReturn?: boolean) => {
     const DBColumn = Object.keys(this.tableData);
+    console.log(DBColumn)
     if (DBColumn.length === 0) {
       return "";
     }
@@ -160,10 +161,7 @@ export default class App {
     // If containing id to tableData it occur error because this.getTemplateUpdatingSQL process id.
     fieldData.push(id);
 
-    let returningClause = "";
-    if (isReturn) {
-      returningClause = `RETURNING ${Object.keys(this.tableData).join()}`
-    }
+    let returningClause = this.getReturningSyntax(isReturn);
 
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause}`;
 

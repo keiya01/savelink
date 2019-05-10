@@ -143,7 +143,7 @@ export default class UserHandler extends AppHandler {
     let userData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      userData = await u.update(id);
+      userData = await u.update(id, true);
     } catch ({ stack }) {
       err = u.checkErrorMessage(stack);
       console.error(stack);
