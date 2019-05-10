@@ -62,7 +62,7 @@ export default class App {
         return `${column} = ${escapeKey}`;
       }
 
-      return `${sql} ${column} = ${escapeKey}`;
+      return `${sql}, ${column} = ${escapeKey}`;
     }, "");
   }
 

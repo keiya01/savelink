@@ -5,7 +5,9 @@ import { ERROR_TYPE } from "../constants/error";
 import { QueryResult } from "pg";
 
 export default class UserHandler extends AppHandler {
-  private validate(email?: string, token_id?: string, username?: string, ) {
+  private validate(user: { email?: string, token_id?: string, username?: string }) {
+    const { email, token_id, username } = user;
+
     this.checkEmptyGQL({ username, email, token_id });
 
     if (email && !this.validateEmail(email)) {
@@ -17,13 +19,45 @@ export default class UserHandler extends AppHandler {
     }
   }
 
+  private setUpdateParameters = (email: string, username: string) => {
+    // Check parameters one by one and update items one by one
+    let updateParameters: Object = {};
+    if (!this.checkEmptyString(email)) {
+      updateParameters = {
+        ...updateParameters,
+        email
+      }
+    }
+    if (!this.checkEmptyString(username)) {
+      updateParameters = {
+        ...updateParameters,
+        username
+      }
+    }
+    if (Object.keys(updateParameters).length === 0) {
+      throw new UserInputError("Please input value", {
+        key: "",
+        value: "",
+        type: ERROR_TYPE.Empty
+      });
+    }
+
+    return updateParameters
+  }
+
+  public getPrivateFunctionForTest = () => {
+    return {
+      setUpdateParameters: this.setUpdateParameters
+    }
+  }
+
   /*
     TODO
     Temporarily set token_id to null.
     After building the server, set token_id to not null in postgreSQL.
   */
   public create = async (_, { username, email }) => {
-    this.validate(email, undefined, username);
+    this.validate({ email, username });
 
     const u = new User({ username, email, created_at: new Date() });
 
@@ -45,7 +79,7 @@ export default class UserHandler extends AppHandler {
 
   // TODO: Add token_id to parameter
   public login = async (_, { email }) => {
-    this.validate(email);
+    this.validate({ email });
 
     const u = new User({ email });
 
@@ -62,29 +96,23 @@ export default class UserHandler extends AppHandler {
     this.checkDatabaseError(err);
 
     let user: UserModel | null = null;
-    if(userData && userData.rows[0]) {
+    if (userData && userData.rows[0]) {
       user = userData.rows[0];
     }
 
     return user;
   }
 
-  public findBy =  async (_, {id}) => {
-    if(this.checkEmpty(id)) {
-      throw new UserInputError("id can not empty", {
-        key: "id",
-        value: "",
-        type: ERROR_TYPE.Empty
-      });
-    }
+  public findBy = async (_, { id }) => {
+    this.checkEmptyGQL({ id });
 
-    const u = new User({id});
+    const u = new User({ id });
 
     let userData: QueryResult | null = null;
-    let err: Object | null  = null;
+    let err: Object | null = null;
     try {
       userData = await u.findBy("id = $1", [id]);
-    } catch({stack}) {
+    } catch ({ stack }) {
       err = u.checkErrorMessage(stack);
       console.error(stack);
     }
@@ -92,10 +120,42 @@ export default class UserHandler extends AppHandler {
     this.checkDatabaseError(err);
 
     let user: UserModel | null = null;
-    if(userData && userData.rows[0]) {
+    if (userData && userData.rows[0]) {
       user = userData.rows[0];
     }
 
     return user
+  }
+
+  // TODO: Add token_id to second parameter
+  // Because use token_id to authenticate the user
+  update = async (_, { id, username, email }) => {
+    // id is require
+    this.checkEmptyGQL({ id });
+
+    // Check parameters one by one and update items one by one
+    let updateValue = this.setUpdateParameters(email, username);
+
+    this.validate(updateValue);
+
+    const u = new User(updateValue);
+
+    let userData: QueryResult | null = null;
+    let err: Object | null = null;
+    try {
+      userData = await u.update(id);
+    } catch ({ stack }) {
+      err = u.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    this.checkDatabaseError(err);
+
+    let user: UserModel | null = null;
+    if (userData && userData.rowCount !== 0) {
+      user = userData.rows[0];
+    }
+
+    return user;
   }
 }
