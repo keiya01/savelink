@@ -131,7 +131,7 @@ export default class PostsHandler extends AppHandler {
     let postData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      postData = await p.update(id);
+      postData = await p.update(id, true);
     } catch ({ stack }) {
       err = p.checkErrorMessage(stack);
       console.error(stack);
@@ -139,7 +139,7 @@ export default class PostsHandler extends AppHandler {
 
     this.validateDatabaseError(err);
 
-    if (postData && postData.rowCount === 0) {
+    if (!postData || postData.rowCount === 0) {
       throw new UserInputError(`id ${id} not found`, {
         key: "id",
         value: id,
@@ -147,11 +147,9 @@ export default class PostsHandler extends AppHandler {
       });
     }
 
-    return {
-      id,
-      uri,
-      comment
-    }
+    const post = postData.rows[0];
+
+    return post;
   }
 
   public delete = async (_, { id }) => {
