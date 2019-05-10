@@ -1,5 +1,6 @@
 import { UserInputError } from "apollo-server-core";
 import { ERROR_TYPE } from "../constants/error";
+import { QueryResult } from "pg";
 
 export default class AppHandler {
   public checkURI(uri: string) {
@@ -56,6 +57,17 @@ export default class AppHandler {
   public validateDatabaseError(err: Object | null) {
     if (err) {
       throw new UserInputError("Data could not save", err);
+    }
+  }
+
+  public validateResponse(data: Object, responseData: QueryResult | null) {
+    if (!responseData || responseData.rowCount === 0) {
+      const keys = Object.keys(data);
+      throw new UserInputError("Could not find data. Please check entered value.", {
+        keys,
+        values: data,
+        type: ERROR_TYPE.Not_Found
+      });
     }
   }
 

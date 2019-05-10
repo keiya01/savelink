@@ -46,6 +46,7 @@ export default class PostsHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(p.getTableData(), postData);
     
     let posts: PostModel[] | null = null;
     if (postData) {
@@ -70,6 +71,7 @@ export default class PostsHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(p.getTableData(), postData);
     
     let post: PostModel | null = null;
     if (postData) {
@@ -95,6 +97,7 @@ export default class PostsHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(p.getTableData(), postData);
 
     let post: PostModel | null = null;
     if (postData) {
@@ -130,6 +133,7 @@ export default class PostsHandler extends AppHandler {
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(p.getTableData(), postData);
 
     let post: PostModel | null = null;
     if (postData) {
