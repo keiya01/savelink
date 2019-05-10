@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 
 import AppHandler from "../app_handler";
+import { UserInputError } from "apollo-server-core";
+import { ERROR_TYPE } from "../../constants/error";
 
 describe("Validate the uri", () => {
   const tests = [
@@ -160,10 +162,140 @@ describe("Check whether or not string type parameter is empty", () => {
     }
   ];
 
-  tests.map(({description, data, result}) => {
+  tests.map(({ description, data, result }) => {
     test(description, () => {
       const appHandler = new AppHandler();
       expect(appHandler.checkEmptyString(data)).toEqual(result);
     });
   });
 });
+
+describe("Check that setUpdateParameters function set updateing postgreSQL data", () => {
+  const tests = [
+    {
+      description: "Passing parameter",
+      data: {
+        email: "test@mail.com",
+        username: "testname"
+      },
+      result: {
+        email: "test@mail.com",
+        username: "testname"
+      },
+      isError: false
+    },
+    {
+      description: "Email is empty string",
+      data: {
+        email: "",
+        username: "testname"
+      },
+      result: {
+        username: "testname"
+      },
+      isError: false
+    },
+    {
+      description: "Data object is only username",
+      data: {
+        username: "testname"
+      },
+      result: {
+        username: "testname"
+      },
+      isError: false
+    },
+    {
+      description: "Data object have user_id that is number type",
+      data: {
+        user_id: 5
+      },
+      result: {
+        user_id: 5
+      },
+      isError: false
+    },
+    {
+      description: "Data object have user_id that is 0",
+      data: {
+        user_id: 0
+      },
+      result: {
+        user_id: 0
+      },
+      isError: false
+    },
+    {
+      description: "There are five data in data object but data object including key that is empty string",
+      data: {
+        title: "title",
+        body: "body",
+        user_id: 2,
+        uri: "https://test.com",
+        theme: ""
+      },
+      result: {
+        title: "title",
+        body: "body",
+        user_id: 2,
+        uri: "https://test.com",
+      },
+      isError: false
+    },
+    {
+      description: "There are five empty data in data object",
+      data: {
+        title: "",
+        body: "",
+        uri: "",
+        theme: ""
+      },
+      result: new UserInputError("Please input value", {
+        keys: ["title", "body", "uri", "theme"],
+        values: {
+          title: "",
+          body: "",
+          uri: "",
+          theme: ""
+        },
+        type: ERROR_TYPE.Empty
+      }),
+      isError: true
+    },
+    {
+      description: "Check empty data object",
+      data: {},
+      result: new UserInputError("Please input value", {
+        keys: [],
+        values: {},
+        type: ERROR_TYPE.Empty
+      }),
+      isError: true
+    }
+  ];
+
+  const noParameterErrorHandle = (table: Object) => {
+    const columns = Object.keys(table);
+    throw new UserInputError("Please input value", {
+      keys: columns,
+      values: table,
+      type: ERROR_TYPE.Empty
+    });
+  }
+
+  tests.map(({ description, data, result, isError }) => {
+    const appHandler = new AppHandler();
+    test(description, () => {
+      if (isError && result instanceof UserInputError) {
+        const getThrowError = () => {
+          appHandler.setUpdateParameters({ ...data }, noParameterErrorHandle);
+        }
+        expect(getThrowError)
+          .toThrowError(result);
+      } else {
+        expect(appHandler.setUpdateParameters({ ...data }, noParameterErrorHandle))
+          .toEqual(result);
+      }
+    });
+  });
+})
