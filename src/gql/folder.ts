@@ -12,7 +12,7 @@ const f = new FoldersHandler();
 
 const resolvers = {
   Query: {
-
+    folders: f.findByUserId
   },
   Mutation: {
     createFolder: f.create

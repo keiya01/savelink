@@ -10,6 +10,8 @@ export const typeDefs = gql`
     post(id: ID): Post
     # user
     user(id: ID): User
+    # folder
+    folders(user_id: ID): [Folder]
   }
 
   type Mutation {

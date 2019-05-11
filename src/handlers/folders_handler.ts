@@ -15,6 +15,27 @@ export default class FoldersHandler extends AppHandler {
     }
   }
 
+  public findByUserId = async (_, {user_id}) => {
+    this.validateId(user_id);
+  
+    const f = new Folder({user_id});
+
+    let err: Object | null = null;
+    let folderData: QueryResult | null = null; 
+    try {
+      folderData = await f.findBy("user_id = $1", [user_id]);
+    } catch({stack}) {
+      err = f.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    this.validateDatabaseError(err);
+
+    const folders = folderData && folderData.rows;
+
+    return folders;
+  }
+
   public create = async (_, {name, user_id}) => {
     this.validateId(user_id);
     this.validation(name);
