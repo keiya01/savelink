@@ -9,7 +9,7 @@ export interface UserModel {
 }
 
 export default class User extends App {
-  constructor(user?: {id?: string, username?: string, email?: string, token_id?: string, created_at?: Date}) {
+  constructor(user?: UserModel) {
     if(!user) {
       super("users", {});
       return;
