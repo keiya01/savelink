@@ -82,9 +82,11 @@ export default class App {
   }
 
   public checkErrorMessage = (errorMessage: string) => {
-    const keys = Object.keys(this.tableData);
+    const tableData = this.tableData;
+    const keys = Object.keys(tableData);
     const errors = [
       "unique",
+      "violates"
     ];
 
     for (let i = 0; i < errors.length; i++) {
@@ -111,7 +113,8 @@ export default class App {
     }
 
     return {
-      key: null,
+      keys,
+      values: tableData,
       type: "db_error"
     };
   }
