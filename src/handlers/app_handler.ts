@@ -60,12 +60,12 @@ export default class AppHandler {
     }
   }
 
-  public validateResponse(data: Object, responseData: QueryResult | null) {
+  public validateResponse(requestData: Object, responseData: QueryResult | null) {
     if (!responseData || responseData.rowCount === 0) {
-      const keys = Object.keys(data);
+      const keys = Object.keys(requestData);
       throw new UserInputError("Could not find data. Please check entered value.", {
         keys,
-        values: data,
+        values: requestData,
         type: ERROR_TYPE.Not_Found
       });
     }
