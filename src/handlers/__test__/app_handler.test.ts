@@ -51,7 +51,7 @@ describe("Validate the uri", () => {
   tests.map(({ description, data, result }) => {
     test(description, () => {
       const appHandler = new AppHandler();
-      expect(appHandler.validateURI(data)).toEqual(result);
+      expect(appHandler.checkURI(data)).toEqual(result);
     })
   });
 });
@@ -93,7 +93,7 @@ describe("Validate the email", () => {
   tests.map(({ description, data, result }) => {
     test(description, () => {
       const appHandler = new AppHandler();
-      expect(appHandler.validateEmail(data)).toEqual(result);
+      expect(appHandler.checkEmail(data)).toEqual(result);
     });
   });
 });

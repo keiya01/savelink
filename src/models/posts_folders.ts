@@ -9,10 +9,24 @@ export interface PostsFoldersModel {
 
 export default class PostsFolders extends App {
   constructor(postsFolders?: PostsFoldersModel) {
-    if(!postsFolders) {
-      super("posts_folders", {});
-      return;
-    }
-    super("posts_folders", postsFolders);
+    super("posts_folders", postsFolders ? postsFolders : {});
+  }
+
+  public saveToFolder = () => {
+    const tableData = this.getTableData();
+    const fields = Object.keys(tableData);
+    const escapeKeys = this.getEscapeKeys(fields.length);
+    const values = Object.values(tableData);
+
+    const sql = `
+      WITH saved_post AS (
+        INSERT INTO posts_folders (${fields.join()}) VALUES (${escapeKeys.join()})
+        RETURNING id, post_id, folder_id, created_at AS saved_at
+      )
+      SELECT * FROM saved_post, posts
+      WHERE saved_post.post_id = posts.id; 
+    `;
+
+    return this.exec(sql, values);
   }
 }

@@ -13,7 +13,7 @@ export default class App {
     return this.tableData;
   }
 
-  private getFieldValue = () => {
+  public getFieldValue = () => {
     const fields = Object.keys(this.tableData);
     const fieldData = fields.reduce((query: any[], field) => {
       if (!this.tableData[field]) {
@@ -29,7 +29,7 @@ export default class App {
     return fieldData;
   }
 
-  private getEscapeKeys = (totalFields: number) => {
+  public getEscapeKeys = (totalFields: number) => {
     const escapeKeys: string[] = [];
     for (let i = 1; i <= totalFields; i++) {
       const escapeKey = `$${i}`;
@@ -39,7 +39,7 @@ export default class App {
     return escapeKeys;
   }
 
-  private getTemplateUpdatingSQL = () => {
+  public getTemplateUpdatingSQL = () => {
     const fields = Object.keys(this.tableData);
     const escapeKeys = this.getEscapeKeys(fields.length);
 
@@ -58,7 +58,7 @@ export default class App {
     }, "");
   }
 
-  private getReturningSyntax = (isReturn?: boolean) => {
+  public getReturningSyntax = (isReturn?: boolean) => {
     const DBColumn = Object.keys(this.tableData);
     if (DBColumn.length === 0) {
       return "";
@@ -70,15 +70,6 @@ export default class App {
     }
 
     return returningClause;
-  }
-
-  public getPrivateFunctionForTest = () => {
-    return {
-      getFieldValue: this.getFieldValue,
-      getEscapeKeys: this.getEscapeKeys,
-      getTemplateUpdatingSQL: this.getTemplateUpdatingSQL,
-      getReturningSyntax: this.getReturningSyntax
-    }
   }
 
   public checkErrorMessage = (errorMessage: string) => {

@@ -65,20 +65,18 @@ export default class FoldersHandler extends AppHandler {
     this.validateId(folder_id);
 
     const pf = new PostsFolders({post_id, folder_id, created_at: new Date()});
-    const f = new Folder();
 
     let folderData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      pf.create(true);
-      folderData = await f.findBy("id = $1", [post_id]);
+      folderData = await pf.saveToFolder();
     } catch({stack}) {
-      err = f.checkErrorMessage(stack);
+      err = pf.checkErrorMessage(stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(f.getTableData(), folderData);
+    this.validateResponse(pf.getTableData(), folderData);
 
     const posts_folders = folderData && folderData.rows[0];
 

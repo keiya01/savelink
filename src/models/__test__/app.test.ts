@@ -33,7 +33,7 @@ describe("Change one map into one array containing two arrays", () => {
     test(item.description, () => {
       const app = new App("Test", item.data);
 
-      expect(app.getPrivateFunctionForTest().getFieldValue()).toEqual(item.result);
+      expect(app.getFieldValue()).toEqual(item.result);
     });
   });
 });
@@ -63,7 +63,7 @@ describe("Get escape key such as $1 or $2 etc from table data", () => {
     const { description, data, result } = testData;
     test(description, () => {
       const app = new App("Test", data);
-      expect(app.getPrivateFunctionForTest().getEscapeKeys(Object.keys(data).length))
+      expect(app.getEscapeKeys(Object.keys(data).length))
         .toEqual(result);
     });
   });
@@ -94,7 +94,7 @@ describe("Get a template for updating data for SQL", () => {
     test(item.description, () => {
       const app = new App("Test", item.data);
 
-      expect(app.getPrivateFunctionForTest().getTemplateUpdatingSQL())
+      expect(app.getTemplateUpdatingSQL())
         .toEqual(item.result);
     });
   });
@@ -155,7 +155,7 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
   tests.map(({ description, data, result }) => {
     test(description, () => {
       const app = new App("Test", data.tableData);
-      expect(app.getPrivateFunctionForTest().getReturningSyntax(data.argument))
+      expect(app.getReturningSyntax(data.argument))
         .toEqual(result);
     });
   });
