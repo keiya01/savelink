@@ -119,6 +119,12 @@ export default class App {
     };
   }
 
+  public exec = (sql: string, values?: any[]) => {
+    const client = setDBClient();
+
+    return client.query(sql, values);
+  }
+
   public findAll = (columns: string[], _order?: { type: "ASC" | "DESC", column: string }) => {
     let order = _order;
     if (!order) {
@@ -130,17 +136,13 @@ export default class App {
 
     const sql = `SELECT ${columns.join()} FROM ${this.tableName} ORDER BY ${order.column} ${order.type};`;
 
-    const client = setDBClient();
-
-    return client.query(sql);
+    return this.exec(sql);
   }
 
   public findBy = (where: string, values: any[]) => {
     const sql = `SELECT * FROM ${this.tableName} WHERE ${where}`;
 
-    const client = setDBClient();
-
-    return client.query(sql, values);
+    return this.exec(sql, values);
   }
 
   public create = (isReturn?: boolean) => {
@@ -156,9 +158,7 @@ export default class App {
 
     const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()}) ${returningSyntax};`;
 
-    const client = setDBClient();
-
-    return client.query(sql, fieldValues);
+    return this.exec(sql, fieldValues);
   }
 
   public update = (id: string, isReturn?: boolean) => {
@@ -172,14 +172,12 @@ export default class App {
 
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause}`;
 
-    const client = setDBClient();
-    return client.query(sql, fieldData);
+    return this.exec(sql, fieldData);
   }
 
   public delete(id: string) {
     const sql = `DELETE FROM ${this.tableName} WHERE id = $1`;
 
-    const client = setDBClient();
-    return client.query(sql, [id]);
+    return this.exec(sql, [id]);
   }
 }
