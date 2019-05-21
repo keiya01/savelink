@@ -9,11 +9,6 @@ export interface FolderModel {
 
 export default class Folder extends App {
   constructor(folder?: FolderModel) {
-    if(!folder) {
-      super("folders", {});
-      return;
-    }
-
-    super("folders", folder);
+    super("folders", folder ? folder : {});
   }
 }
