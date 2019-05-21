@@ -25,6 +25,7 @@ export const typeDefs = gql`
     updateUser(id: ID!, username: String!, email: String!): User
     # folder
     createFolder(name: String!, user_id: ID!): Folder
+    saveFolder(post_id: ID, folder_id: ID): FolderPost
   }
   
   ${post.typeDef}

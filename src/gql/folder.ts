@@ -6,16 +6,25 @@ const typeDefs = `
     name: String
     user_id: ID
   }
+
+  type FolderPost {
+    id: ID
+    uri: String
+    comment: String
+    post_id: ID
+    folder_id: ID
+  }
 `;
 
 const f = new FoldersHandler();
 
 const resolvers = {
   Query: {
-    folders: f.findByUserId
+    folders: f.findByUserId,
   },
   Mutation: {
-    createFolder: f.create
+    createFolder: f.create,
+    saveFolder: f.save
   }
 }
 

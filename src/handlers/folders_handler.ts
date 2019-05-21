@@ -64,12 +64,14 @@ export default class FoldersHandler extends AppHandler {
     this.validateId(post_id);
     this.validateId(folder_id);
 
-    const f = new PostsFolders({post_id, folder_id, created_at: new Date()});
+    const pf = new PostsFolders({post_id, folder_id, created_at: new Date()});
+    const f = new Folder();
 
     let folderData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      folderData = await f.create(true);
+      pf.create(true);
+      folderData = await f.findBy("id = $1", [post_id]);
     } catch({stack}) {
       err = f.checkErrorMessage(stack);
       console.error(stack);
