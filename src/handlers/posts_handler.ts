@@ -33,13 +33,15 @@ export default class PostsHandler extends AppHandler {
     }
   }
 
-  public findAll = async () => {
+  public findAll = async (_, {page}) => {
     const p = new Post();
 
     let postData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      postData = await p.findAll(["*"], { type: "DESC", column: "created_at" });
+      const limit = page !== 0 ? page * 20 : 20;
+      const offset = page > 1 ? (page - 1) * 20 : 0;
+      postData = await p.findAll({ type: "DESC", column: "created_at" }, limit, offset);
     } catch ({ stack }) {
       err = p.checkErrorMessage(stack);
       console.error(stack);

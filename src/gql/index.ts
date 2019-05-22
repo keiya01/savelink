@@ -6,12 +6,12 @@ import folder from "./folder";
 export const typeDefs = gql`
   type Query {
     # post
-    posts: [Post]
+    posts(page: Int!): [Post]
     post(id: ID): Post
     # user
     user(id: ID): User
     # folder
-    folders(user_id: ID): [Folder]
+    folders(user_id: ID, page: Int!): [Folder]
   }
 
   type Mutation {

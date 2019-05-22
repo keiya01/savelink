@@ -1,5 +1,10 @@
 import { setDBClient } from "../database";
 
+export interface Order {
+  type: "ASC" | "DESC";
+  column: string;
+}
+
 export default class App {
   private tableName: string;
   private tableData: Object;
@@ -63,7 +68,7 @@ export default class App {
     if (DBColumn.length === 0) {
       return "";
     }
-    
+
     let returningClause = "";
     if (isReturn) {
       returningClause = `RETURNING ${DBColumn.join()}`
@@ -116,22 +121,61 @@ export default class App {
     return client.query(sql, values);
   }
 
-  public findAll = (columns: string[], _order?: { type: "ASC" | "DESC", column: string }) => {
+  public findAll = (_order?: Order, limit?: number, offset?: number) => {
     let order = _order;
     if (!order) {
       order = {
-        type: "DESC",
+        type: "ASC",
         column: 'id'
       };
     }
 
-    const sql = `SELECT ${columns.join()} FROM ${this.tableName} ORDER BY ${order.column} ${order.type};`;
+    let limitClause = "";
+    if (limit) {
+      limitClause = `LIMIT ${limit}`;
+    }
+
+    let offsetClause = "";
+    if (offset) {
+      offsetClause = `OFFSET ${offsetClause}`;
+    }
+
+    const sql = `
+      SELECT * FROM ${this.tableName} 
+      ORDER BY ${order.column} ${order.type} 
+      ${limitClause} 
+      ${offsetClause};
+    `;
 
     return this.exec(sql);
   }
 
-  public findBy = (where: string, values: any[]) => {
-    const sql = `SELECT * FROM ${this.tableName} WHERE ${where}`;
+  public findBy = (where: string, values: any[], _order?: Order, limit?: number, offset?: number) => {
+    let order = _order;
+    if (!order) {
+      order = {
+        type: "ASC",
+        column: 'id'
+      };
+    }
+
+    let limitClause = "";
+    if (limit) {
+      limitClause = `LIMIT ${limit}`;
+    }
+
+    let offsetClause = "";
+    if (offset) {
+      offsetClause = `OFFSET ${offsetClause}`;
+    }
+
+    const sql = `
+      SELECT * FROM ${this.tableName} 
+      WHERE ${where} 
+      ORDER BY ${order.column} ${order.type} 
+      ${limitClause} 
+      ${offsetClause};
+    `;
 
     return this.exec(sql, values);
   }
@@ -143,7 +187,7 @@ export default class App {
     const escapeKeys = this.getEscapeKeys(fields.length);
 
     let returningSyntax = "";
-    if(isReturn) {
+    if (isReturn) {
       returningSyntax = `RETURNING ${fields.join()}`
     }
 

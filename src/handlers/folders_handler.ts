@@ -16,7 +16,7 @@ export default class FoldersHandler extends AppHandler {
     }
   }
 
-  public findByUserId = async (_, {user_id}) => {
+  public findByUserId = async (_, {user_id, page}) => {
     this.validateId(user_id);
   
     const f = new Folder({user_id});
@@ -24,7 +24,9 @@ export default class FoldersHandler extends AppHandler {
     let err: Object | null = null;
     let folderData: QueryResult | null = null; 
     try {
-      folderData = await f.findBy("user_id = $1", [user_id]);
+      const limit = page !== 0 ? page * 20 : 20;
+      const offset = page > 1 ? (page - 1) * 20 : 0;
+      folderData = await f.findBy("user_id = $1", [user_id], {type: "DESC", column: "created_at"}, limit, offset);
     } catch({stack}) {
       err = f.checkErrorMessage(stack);
       console.error(stack);
