@@ -83,6 +83,33 @@ export default class PostsHandler extends AppHandler {
     return post;
   }
 
+  public findByUserId = async (_, {user_id, page}) => {
+    this.validateId(user_id);
+
+    const p = new Post({user_id});
+
+    let postData: QueryResult | null = null;
+    let err: Object | null = null;
+    try {
+      const limit = page !== 0 ? page * 20 : 20;
+      const offset = page > 1 ? (page - 1) * 20 : 0;
+      postData = await p.findBy("user_id = $1", [user_id], {type: "DESC", column: "created_at"}, limit, offset);
+    } catch({stack}) {
+      err = p.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    this.validateDatabaseError(err);
+    this.validateResponse(p.getTableData(), postData);
+
+    let posts: PostModel[] | null = null;
+    if(postData) {
+      posts = postData.rows;
+    }
+
+    return posts;
+  }
+
   public create = async (_, { uri, comment, user_id }) => {
     this.validateId(user_id);
     this.validate({uri, comment});

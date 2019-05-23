@@ -18,6 +18,7 @@ const resolvers = {
   Query: {
     posts: p.findAll,
     post: p.findById,
+    postsForUser: p.findByUserId
   },
   Mutation: {
     createPost: p.create,

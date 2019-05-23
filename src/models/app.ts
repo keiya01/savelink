@@ -137,7 +137,7 @@ export default class App {
 
     let offsetClause = "";
     if (offset) {
-      offsetClause = `OFFSET ${offsetClause}`;
+      offsetClause = `OFFSET ${offset}`;
     }
 
     const sql = `
@@ -166,7 +166,7 @@ export default class App {
 
     let offsetClause = "";
     if (offset) {
-      offsetClause = `OFFSET ${offsetClause}`;
+      offsetClause = `OFFSET ${offset}`;
     }
 
     const sql = `

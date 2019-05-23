@@ -7,7 +7,8 @@ export const typeDefs = gql`
   type Query {
     # post
     posts(page: Int!): [Post]
-    post(id: ID): Post
+    post(id: ID!): Post
+    postsForUser(user_id: ID!, page: Int!): [Post]
     # user
     user(id: ID): User
     # folder

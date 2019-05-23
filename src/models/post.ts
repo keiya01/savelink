@@ -9,11 +9,7 @@ export interface PostModel {
 }
 export default class Post extends App {
   constructor(post?: PostModel) {
-    if (!post) {
-      super("posts", {});
-      return;
-    }
-    super("posts", post);
+    super("posts", post ? post : {});
   }
 
 }
