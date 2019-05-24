@@ -43,12 +43,12 @@ export default class PostsHandler extends AppHandler {
       const offset = page > 1 ? (page - 1) * 20 : 0;
       postData = await p.findAll({ type: "DESC", column: "created_at" }, limit, offset);
     } catch ({ stack }) {
-      err = p.checkErrorMessage(stack);
+      err = p.checkErrorMessage({page}, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(p.getTableData(), postData);
+    this.validateResponse({page}, postData);
     
     let posts: PostModel[] | null = null;
     if (postData) {
@@ -65,15 +65,16 @@ export default class PostsHandler extends AppHandler {
 
     let postData: QueryResult | null = null;
     let err: Object | null = null;
+
     try {
       postData = await p.findBy("id = $1", [id]);
     } catch ({ stack }) {
-      err = p.checkErrorMessage(stack);
+      err = p.checkErrorMessage({id}, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(p.getTableData(), postData);
+    this.validateResponse({id}, postData);
     
     let post: PostModel | null = null;
     if (postData) {
@@ -86,7 +87,9 @@ export default class PostsHandler extends AppHandler {
   public findByUserId = async (_, {user_id, page}) => {
     this.validateId(user_id);
 
-    const p = new Post({user_id});
+    const p = new Post();
+
+    const tableData = {user_id};
 
     let postData: QueryResult | null = null;
     let err: Object | null = null;
@@ -95,12 +98,12 @@ export default class PostsHandler extends AppHandler {
       const offset = page > 1 ? (page - 1) * 20 : 0;
       postData = await p.findBy("user_id = $1", [user_id], {type: "DESC", column: "created_at"}, limit, offset);
     } catch({stack}) {
-      err = p.checkErrorMessage(stack);
+      err = p.checkErrorMessage({...tableData, page}, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(p.getTableData(), postData);
+    this.validateResponse({...tableData, page}, postData);
 
     let posts: PostModel[] | null = null;
     if(postData) {
@@ -114,19 +117,21 @@ export default class PostsHandler extends AppHandler {
     this.validateId(user_id);
     this.validate({uri, comment});
 
-    const p = new Post({ uri, comment, user_id, created_at: new Date });
+    const p = new Post();
+
+    const tableData = { uri, comment, user_id, created_at: new Date };
 
     let err: Object | null = null;
     let postData: QueryResult | null = null;
     try {
-      postData = await p.create(true);
+      postData = await p.create(tableData, true);
     } catch ({ stack }) {
-      err = p.checkErrorMessage(stack);
+      err = p.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(p.getTableData(), postData);
+    this.validateResponse(tableData, postData);
 
     let post: PostModel | null = null;
     if (postData) {
@@ -150,19 +155,19 @@ export default class PostsHandler extends AppHandler {
 
     this.validate(updatingData)
 
-    const p = new Post(updatingData);
+    const p = new Post();
 
     let postData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      postData = await p.update(true);
+      postData = await p.update(updatingData, true);
     } catch ({ stack }) {
-      err = p.checkErrorMessage(stack);
+      err = p.checkErrorMessage(updatingData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(p.getTableData(), postData);
+    this.validateResponse(updatingData, postData);
 
     let post: PostModel | null = null;
     if (postData) {
@@ -181,7 +186,7 @@ export default class PostsHandler extends AppHandler {
     try {
       await p.delete(id);
     } catch({stack}) {
-      err = p.checkErrorMessage(stack);
+      err = p.checkErrorMessage({id}, stack);
       console.error(stack);
     }
 

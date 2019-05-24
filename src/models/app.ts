@@ -56,8 +56,8 @@ export default class App<T> {
     return returningClause;
   }
 
-  public checkErrorMessage = (tableData: T, errorMessage: string) => {
-    const keys = Object.keys(tableData);
+  public checkErrorMessage = (requestData: Object, errorMessage: string) => {
+    const keys = Object.keys(requestData);
     const errors = [
       "unique",
       "violates"
@@ -80,7 +80,7 @@ export default class App<T> {
 
         return {
           key: errorKey,
-          value: tableData[errorKey],
+          value: requestData[errorKey],
           type: error
         };
       }
@@ -88,7 +88,7 @@ export default class App<T> {
 
     return {
       keys,
-      values: tableData,
+      values: requestData,
       type: "db_error"
     };
   }

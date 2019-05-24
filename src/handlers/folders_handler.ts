@@ -19,7 +19,9 @@ export default class FoldersHandler extends AppHandler {
   public findByUserId = async (_, {user_id, page}) => {
     this.validateId(user_id);
   
-    const f = new Folder({user_id});
+    const f = new Folder();
+
+    const tableData = {user_id};
 
     let err: Object | null = null;
     let folderData: QueryResult | null = null; 
@@ -28,7 +30,7 @@ export default class FoldersHandler extends AppHandler {
       const offset = page > 1 ? (page - 1) * 20 : 0;
       folderData = await f.findBy("user_id = $1", [user_id], {type: "DESC", column: "created_at"}, limit, offset);
     } catch({stack}) {
-      err = f.checkErrorMessage(stack);
+      err = f.checkErrorMessage({...tableData, page}, stack);
       console.error(stack);
     }
 
@@ -43,19 +45,21 @@ export default class FoldersHandler extends AppHandler {
     this.validateId(user_id);
     this.validation(name);
 
-    const f = new Folder({name, user_id, created_at: new Date()});
+    const f = new Folder();
+
+    const tableData = {name, user_id, created_at: new Date()};
 
     let folderData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      folderData = await f.create(true);
+      folderData = await f.create(tableData, true);
     } catch({stack}) {
-      err = f.checkErrorMessage(stack);
+      err = f.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(f.getTableData(), folderData)
+    this.validateResponse(tableData, folderData)
     
     const folder = folderData && folderData.rows[0];
 
@@ -66,19 +70,21 @@ export default class FoldersHandler extends AppHandler {
     this.validateId(post_id);
     this.validateId(folder_id);
 
-    const pf = new PostsFolders({post_id, folder_id, created_at: new Date()});
+    const pf = new PostsFolders();
+
+    const tableData = {post_id, folder_id, created_at: new Date()};
 
     let folderData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      folderData = await pf.saveToFolder();
+      folderData = await pf.saveToFolder(tableData);
     } catch({stack}) {
-      err = pf.checkErrorMessage(stack);
+      err = pf.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(pf.getTableData(), folderData);
+    this.validateResponse(tableData, folderData);
 
     const posts_folders = folderData && folderData.rows[0];
 
@@ -89,13 +95,15 @@ export default class FoldersHandler extends AppHandler {
     this.validateId(id);
     this.validateId(folder_id);
 
-    const pf = new PostsFolders({id, folder_id});
+    const pf = new PostsFolders();
+
+    const tableData = {id, folder_id};
 
     let err: Object | null = null;
     try {
-      pf.update();
+      pf.update(tableData);
     } catch({stack}) {
-      err = pf.checkErrorMessage(stack);
+      err = pf.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
