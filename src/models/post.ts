@@ -8,8 +8,8 @@ export interface PostModel {
   created_at?: Date
 }
 export default class Post extends App {
-  constructor(post?: PostModel) {
-    super("posts", post ? post : {});
+  constructor() {
+    super("posts");
   }
 
 }

@@ -7,19 +7,17 @@ export interface Order {
 
 export default class App {
   private tableName: string;
-  private tableData: Object;
 
-  public constructor(tableName: string, tableData: Object) {
+  public constructor(tableName: string) {
     this.tableName = tableName;
-    this.tableData = tableData;
   }
 
-  public getTableData() {
-    return this.tableData;
+  public getTableData<T>(tableData: T) {
+    return tableData;
   }
 
-  public getFieldValue = () => {
-    return Object.values(this.tableData);
+  public getFieldValue = <T>(tableData: T) => {
+    return Object.values(tableData);
 
   }
 
@@ -33,8 +31,8 @@ export default class App {
     return escapeKeys;
   }
 
-  public getTemplateUpdatingSQL = () => {
-    const fields = Object.keys(this.tableData).slice(1);
+  public getTemplateUpdatingSQL = <T>(tableData: T) => {
+    const fields = Object.keys(tableData).slice(1);
     const escapeKeys = this.getEscapeKeys(fields.length);
 
     return fields.reduce((sql, column, index) => {
@@ -48,8 +46,8 @@ export default class App {
     }, "");
   }
 
-  public getReturningSyntax = (isReturn?: boolean) => {
-    const DBColumn = Object.keys(this.tableData);
+  public getReturningSyntax = <T>(tableData: T, isReturn?: boolean) => {
+    const DBColumn = Object.keys(tableData);
     if (DBColumn.length === 0) {
       return "";
     }
@@ -62,8 +60,7 @@ export default class App {
     return returningClause;
   }
 
-  public checkErrorMessage = (errorMessage: string) => {
-    const tableData = this.tableData;
+  public checkErrorMessage = <T>(tableData: T, errorMessage: string) => {
     const keys = Object.keys(tableData);
     const errors = [
       "unique",
@@ -87,7 +84,7 @@ export default class App {
 
         return {
           key: errorKey,
-          value: this.tableData[errorKey],
+          value: tableData[errorKey],
           type: error
         };
       }
@@ -165,9 +162,9 @@ export default class App {
     return this.exec(sql, values);
   }
 
-  public create = (isReturn?: boolean) => {
-    const fields = Object.keys(this.tableData);
-    const fieldValues = this.getFieldValue();
+  public create = <T>(tableData: T, isReturn?: boolean) => {
+    const fields = Object.keys(tableData);
+    const fieldValues = this.getFieldValue(tableData);
 
     const escapeKeys = this.getEscapeKeys(fields.length);
 
@@ -181,9 +178,9 @@ export default class App {
     return this.exec(sql, fieldValues);
   }
 
-  public update = (isReturn?: boolean) => {
-    const updateValue = this.getTemplateUpdatingSQL();
-    const fieldData = this.getFieldValue();
+  public update = <T>(tableData: T, isReturn?: boolean) => {
+    const updateValue = this.getTemplateUpdatingSQL(tableData);
+    const fieldData = this.getFieldValue(tableData);
 
     let returningClause = this.getReturningSyntax(isReturn);
 

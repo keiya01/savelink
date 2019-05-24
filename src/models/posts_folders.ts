@@ -8,12 +8,11 @@ export interface PostsFoldersModel {
 }
 
 export default class PostsFolders extends App {
-  constructor(postsFolders?: PostsFoldersModel) {
-    super("posts_folders", postsFolders ? postsFolders : {});
+  constructor() {
+    super("posts_folders");
   }
 
-  public saveToFolder = () => {
-    const tableData = this.getTableData();
+  public saveToFolder = (tableData: PostsFoldersModel) => {
     const fields = Object.keys(tableData);
     const escapeKeys = this.getEscapeKeys(fields.length);
     const values = Object.values(tableData);

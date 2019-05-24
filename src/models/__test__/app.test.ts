@@ -31,9 +31,9 @@ describe("Change one map into one array containing two arrays", () => {
 
   tests.map(item => {
     test(item.description, () => {
-      const app = new App("Test", item.data);
+      const app = new App("Test");
 
-      expect(app.getFieldValue()).toEqual(item.result);
+      expect(app.getFieldValue(item.data)).toEqual(item.result);
     });
   });
 });
@@ -62,7 +62,7 @@ describe("Get escape key such as $1 or $2 etc from table data", () => {
   tests.map(testData => {
     const { description, data, result } = testData;
     test(description, () => {
-      const app = new App("Test", data);
+      const app = new App("Test");
       expect(app.getEscapeKeys(Object.keys(data).length))
         .toEqual(result);
     });
@@ -92,9 +92,9 @@ describe("Get a template for updating data for SQL", () => {
 
   tests.map(item => {
     test(item.description, () => {
-      const app = new App("Test", item.data);
+      const app = new App("Test");
 
-      expect(app.getTemplateUpdatingSQL())
+      expect(app.getTemplateUpdatingSQL(item.data))
         .toEqual(item.result);
     });
   });
@@ -111,7 +111,7 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
           username: "test",
           email: "test@mail.com"
         },
-        argument: true
+        isReturn: true
       },
       result: "RETURNING id,username,email",
     },
@@ -122,7 +122,7 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
           id: "1",
           email: "test@mail.com"
         },
-        argument: true
+        isReturn: true
       },
       result: "RETURNING id,email"
     },
@@ -130,7 +130,7 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
       description: "Check whether function can get syntax that include 1 values",
       data: {
         tableData: { id: "1" },
-        argument: true
+        isReturn: true
       },
       result: "RETURNING id"
     },
@@ -138,7 +138,7 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
       description: "Check whether function can get syntax that include 0 values",
       data: {
         tableData: {},
-        argument: true
+        isReturn: true
       },
       result: ""
     },
@@ -146,7 +146,7 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
       description: "Check whether empty string is returned when argument is false",
       data: {
         tableData: {},
-        argument: false
+        isReturn: false
       },
       result: ""
     },
@@ -154,8 +154,8 @@ describe("Check getReturningSyntax function that get RETURNING syntax for postgr
 
   tests.map(({ description, data, result }) => {
     test(description, () => {
-      const app = new App("Test", data.tableData);
-      expect(app.getReturningSyntax(data.argument))
+      const app = new App("Test");
+      expect(app.getReturningSyntax(data.tableData, data.isReturn))
         .toEqual(result);
     });
   });
