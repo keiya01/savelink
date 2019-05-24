@@ -5,7 +5,7 @@ export interface Order {
   column: string;
 }
 
-export default class App<T> {
+export default class App<T extends Object> {
   private tableName: string;
 
   public constructor(tableName: string) {
@@ -175,6 +175,10 @@ export default class App<T> {
   }
 
   public update = (tableData: T, isReturn?: boolean) => {
+    if(!tableData.hasOwnProperty("id")) {
+      throw new Error("ERROR: tableData must contain an id. Please check tableData.")
+    }
+
     const updateValue = this.getTemplateUpdatingSQL(tableData);
     const fieldData = this.getFieldValue(tableData);
 
