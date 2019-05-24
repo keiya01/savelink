@@ -7,7 +7,7 @@ export interface PostsFoldersModel {
   created_at?: Date;
 }
 
-export default class PostsFolders extends App {
+export default class PostsFolders extends App<PostsFoldersModel> {
   constructor() {
     super("posts_folders");
   }

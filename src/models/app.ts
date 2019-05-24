@@ -5,18 +5,14 @@ export interface Order {
   column: string;
 }
 
-export default class App {
+export default class App<T> {
   private tableName: string;
 
   public constructor(tableName: string) {
     this.tableName = tableName;
   }
 
-  public getTableData<T>(tableData: T) {
-    return tableData;
-  }
-
-  public getFieldValue = <T>(tableData: T) => {
+  public getFieldValue = (tableData: T) => {
     return Object.values(tableData);
 
   }
@@ -31,7 +27,7 @@ export default class App {
     return escapeKeys;
   }
 
-  public getTemplateUpdatingSQL = <T>(tableData: T) => {
+  public getTemplateUpdatingSQL = (tableData: T) => {
     const fields = Object.keys(tableData).slice(1);
     const escapeKeys = this.getEscapeKeys(fields.length);
 
@@ -46,7 +42,7 @@ export default class App {
     }, "");
   }
 
-  public getReturningSyntax = <T>(tableData: T, isReturn?: boolean) => {
+  public getReturningSyntax = (tableData: T, isReturn?: boolean) => {
     const DBColumn = Object.keys(tableData);
     if (DBColumn.length === 0) {
       return "";
@@ -60,7 +56,7 @@ export default class App {
     return returningClause;
   }
 
-  public checkErrorMessage = <T>(tableData: T, errorMessage: string) => {
+  public checkErrorMessage = (tableData: T, errorMessage: string) => {
     const keys = Object.keys(tableData);
     const errors = [
       "unique",
@@ -162,7 +158,7 @@ export default class App {
     return this.exec(sql, values);
   }
 
-  public create = <T>(tableData: T, isReturn?: boolean) => {
+  public create = (tableData: T, isReturn?: boolean) => {
     const fields = Object.keys(tableData);
     const fieldValues = this.getFieldValue(tableData);
 
@@ -178,11 +174,11 @@ export default class App {
     return this.exec(sql, fieldValues);
   }
 
-  public update = <T>(tableData: T, isReturn?: boolean) => {
+  public update = (tableData: T, isReturn?: boolean) => {
     const updateValue = this.getTemplateUpdatingSQL(tableData);
     const fieldData = this.getFieldValue(tableData);
 
-    let returningClause = this.getReturningSyntax(isReturn);
+    let returningClause = this.getReturningSyntax(tableData, isReturn);
 
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause};`;
 

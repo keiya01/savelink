@@ -8,13 +8,8 @@ export interface UserModel {
   created_at?:Date; 
 }
 
-export default class User extends App {
-  constructor(user?: UserModel) {
-    if(!user) {
-      super("users", {});
-      return;
-    }
-
-    super("users", user);
+export default class User extends App<UserModel> {
+  constructor() {
+    super("users");
   }
 }

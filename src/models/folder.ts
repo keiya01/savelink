@@ -7,7 +7,7 @@ export interface FolderModel {
   created_at?: Date,
 }
 
-export default class Folder extends App {
+export default class Folder extends App<FolderModel> {
   constructor() {
     super("folders");
   }

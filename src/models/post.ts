@@ -7,7 +7,7 @@ export interface PostModel {
   user_id?: string,
   created_at?: Date
 }
-export default class Post extends App {
+export default class Post extends App<PostModel> {
   constructor() {
     super("posts");
   }
