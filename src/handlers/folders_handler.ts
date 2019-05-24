@@ -114,4 +114,25 @@ export default class FoldersHandler extends AppHandler {
     // The return value is true because it is validated by this.validateResponse function
     return true;
   }
+
+  public deleteFromFolder = async (_, {post_folder_id}) => {
+    this.validateId(post_folder_id);
+
+    const pf = new PostsFolders();
+    const tableData = {id: post_folder_id};
+
+    let response: QueryResult | null = null;
+    let err: Object | null = null;
+    try {
+      response = await pf.delete(post_folder_id);
+    } catch({stack}) {
+      err = pf.checkErrorMessage(tableData, stack);
+      console.error(stack);
+    }
+
+    this.validateDatabaseError(err);
+    this.validateResponse(tableData, response);
+
+    return true;
+  }
 }

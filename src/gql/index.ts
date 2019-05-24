@@ -28,6 +28,7 @@ export const typeDefs = gql`
     createFolder(name: String!, user_id: ID!): Folder
     saveFolder(post_id: ID, folder_id: ID): PostFolder
     changeFolder(post_folder_id: ID!, destination_folder_id: ID!): Boolean
+    deleteFromFolder(post_folder_id: ID): Boolean
   }
   
   ${post.typeDef}

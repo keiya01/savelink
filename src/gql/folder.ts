@@ -25,7 +25,8 @@ const resolvers = {
   Mutation: {
     createFolder: f.create,
     saveFolder: f.save,
-    changeFolder: f.changeFolder
+    changeFolder: f.changeFolder,
+    deleteFromFolder: f.deleteFromFolder
   }
 }
 
