@@ -187,7 +187,7 @@ export default class App {
 
     let returningClause = this.getReturningSyntax(isReturn);
 
-    const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause}`;
+    const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause};`;
 
     // id must be placed last in array
     const values = [
@@ -199,7 +199,7 @@ export default class App {
   }
 
   public delete(id: string) {
-    const sql = `DELETE FROM ${this.tableName} WHERE id = $1`;
+    const sql = `DELETE FROM ${this.tableName} WHERE id = $1;`;
 
     return this.exec(sql, [id]);
   }
