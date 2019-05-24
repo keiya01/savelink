@@ -7,7 +7,7 @@ const typeDefs = `
     user_id: ID
   }
 
-  type FolderPost {
+  type PostFolder {
     id: ID
     uri: String
     comment: String
@@ -24,7 +24,8 @@ const resolvers = {
   },
   Mutation: {
     createFolder: f.create,
-    saveFolder: f.save
+    saveFolder: f.save,
+    changeFolder: f.changeFolder
   }
 }
 

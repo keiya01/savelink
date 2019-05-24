@@ -91,24 +91,27 @@ export default class FoldersHandler extends AppHandler {
     return posts_folders;
   }
 
-  public changeFolder = (_, {id, folder_id}) => {
-    this.validateId(id);
-    this.validateId(folder_id);
+  public changeFolder = async (_, {post_folder_id, destination_folder_id}) => {
+    this.validateId(post_folder_id);
+    this.validateId(destination_folder_id);
 
     const pf = new PostsFolders();
 
-    const tableData = {id, folder_id};
+    const tableData = {id: post_folder_id, folder_id: destination_folder_id};
 
+    let response: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      pf.update(tableData);
+      response = await pf.update(tableData);
     } catch({stack}) {
       err = pf.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
+    this.validateResponse(tableData, response);
 
-    return {};
+    // The return value is true because it is validated by this.validateResponse function
+    return true;
   }
 }
