@@ -27,19 +27,21 @@ export default class UserHandler extends AppHandler {
   public create = async (_, { username, email }) => {
     this.validate({ email, username });
 
-    const u = new User({ username, email, created_at: new Date() });
+    const u = new User();
+
+    const tableData = { username, email, created_at: new Date() };
 
     let err: Object | null = null;
     let userData: QueryResult | null = null;
     try {
-      userData = await u.create(true);
+      userData = await u.create(tableData, true);
     } catch ({ stack }) {
-      err = u.checkErrorMessage(stack);
+      err = u.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(u.getTableData(), userData);
+    this.validateResponse(tableData, userData);
 
     let user: UserModel | null = null;
     if (userData) {
@@ -53,7 +55,9 @@ export default class UserHandler extends AppHandler {
   public login = async (_, { email }) => {
     this.validate({ email });
 
-    const u = new User({ email });
+    const u = new User();
+
+    const tableData = { email }
 
     let userData: QueryResult | null = null;
     let err: Object | null = null;
@@ -61,12 +65,12 @@ export default class UserHandler extends AppHandler {
       // TODO: Add token_id to first argument of finrBy function
       userData = await u.findBy("email = $1", [email]);
     } catch ({ stack }) {
-      err = u.checkErrorMessage(stack);
+      err = u.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(u.getTableData(), userData);
+    this.validateResponse(tableData, userData);
 
     let user: UserModel | null = null;
     if (userData) {
@@ -79,19 +83,21 @@ export default class UserHandler extends AppHandler {
   public findBy = async (_, { id }) => {
     this.validateId(id);
 
-    const u = new User({ id });
+    const u = new User();
+
+    const tableData = { id };
 
     let userData: QueryResult | null = null;
     let err: Object | null = null;
     try {
       userData = await u.findBy("id = $1", [id]);
     } catch ({ stack }) {
-      err = u.checkErrorMessage(stack);
+      err = u.checkErrorMessage(tableData, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(u.getTableData(), userData);
+    this.validateResponse(tableData, userData);
 
     let user: UserModel | null = null;
     if (userData) {
@@ -119,19 +125,19 @@ export default class UserHandler extends AppHandler {
 
     this.validate(updateValue);
 
-    const u = new User(updateValue);
+    const u = new User();
 
     let userData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      userData = await u.update(true);
+      userData = await u.update(updateValue, true);
     } catch ({ stack }) {
-      err = u.checkErrorMessage(stack);
+      err = u.checkErrorMessage(updateValue, stack);
       console.error(stack);
     }
 
     this.validateDatabaseError(err);
-    this.validateResponse(u.getTableData(), userData);
+    this.validateResponse(updateValue, userData);
 
     let user: UserModel | null = null;
     if (userData) {
