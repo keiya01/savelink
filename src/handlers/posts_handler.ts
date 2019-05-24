@@ -139,7 +139,7 @@ export default class PostsHandler extends AppHandler {
   public update = async (_, { id, uri, comment }) => {
     this.validateId(id);
 
-    let updatingData: PostModel = this.setUpdateParameters({ uri, comment }, (table: Object) => {
+    let updatingData: PostModel = this.setUpdateParameters({ id, uri, comment }, (table: Object) => {
       const columns = Object.keys(table);
       throw new UserInputError("Please enter a value in the form", {
         keys: columns,
@@ -155,7 +155,7 @@ export default class PostsHandler extends AppHandler {
     let postData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      postData = await p.update(id, true);
+      postData = await p.update(true);
     } catch ({ stack }) {
       err = p.checkErrorMessage(stack);
       console.error(stack);

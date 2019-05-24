@@ -108,7 +108,7 @@ export default class UserHandler extends AppHandler {
     this.validateId(id);
 
     // Check parameters one by one and update items one by one
-    let updateValue = this.setUpdateParameters({ email, username }, (table: Object) => {
+    let updateValue = this.setUpdateParameters({ id, email, username }, (table: Object) => {
       const columns = Object.keys(table);
       throw new UserInputError("Please enter a value in the form", {
         keys: columns,
@@ -124,7 +124,7 @@ export default class UserHandler extends AppHandler {
     let userData: QueryResult | null = null;
     let err: Object | null = null;
     try {
-      userData = await u.update(id, true);
+      userData = await u.update(true);
     } catch ({ stack }) {
       err = u.checkErrorMessage(stack);
       console.error(stack);

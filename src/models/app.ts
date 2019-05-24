@@ -19,19 +19,8 @@ export default class App {
   }
 
   public getFieldValue = () => {
-    const fields = Object.keys(this.tableData);
-    const fieldData = fields.reduce((query: any[], field) => {
-      if (!this.tableData[field]) {
-        return query;
-      }
+    return Object.values(this.tableData);
 
-      return [
-        ...query,
-        this.tableData[field]
-      ]
-    }, []);
-
-    return fieldData;
   }
 
   public getEscapeKeys = (totalFields: number) => {
@@ -45,15 +34,11 @@ export default class App {
   }
 
   public getTemplateUpdatingSQL = () => {
-    const fields = Object.keys(this.tableData);
+    const fields = Object.keys(this.tableData).slice(1);
     const escapeKeys = this.getEscapeKeys(fields.length);
 
     return fields.reduce((sql, column, index) => {
       const escapeKey = escapeKeys[index];
-
-      if (!this.tableData[column]) {
-        return sql;
-      }
 
       if (sql === "") {
         return `${column} = ${escapeKey}`;
@@ -196,18 +181,21 @@ export default class App {
     return this.exec(sql, fieldValues);
   }
 
-  public update = (id: string, isReturn?: boolean) => {
+  public update = (isReturn?: boolean) => {
     const updateValue = this.getTemplateUpdatingSQL();
     const fieldData = this.getFieldValue();
-
-    // If containing id to tableData it occur error because this.getTemplateUpdatingSQL process id.
-    fieldData.push(id);
 
     let returningClause = this.getReturningSyntax(isReturn);
 
     const sql = `UPDATE ${this.tableName} SET ${updateValue} WHERE id = $${fieldData.length} ${returningClause}`;
 
-    return this.exec(sql, fieldData);
+    // id must be placed last in array
+    const values = [
+      ...fieldData.slice(1),
+      fieldData[0],
+    ];
+
+    return this.exec(sql, values);
   }
 
   public delete(id: string) {

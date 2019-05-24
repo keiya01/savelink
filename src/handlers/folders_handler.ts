@@ -84,4 +84,23 @@ export default class FoldersHandler extends AppHandler {
 
     return posts_folders;
   }
+
+  public changeFolder = (_, {id, folder_id}) => {
+    this.validateId(id);
+    this.validateId(folder_id);
+
+    const pf = new PostsFolders({id, folder_id});
+
+    let err: Object | null = null;
+    try {
+      pf.update();
+    } catch({stack}) {
+      err = pf.checkErrorMessage(stack);
+      console.error(stack);
+    }
+
+    this.validateDatabaseError(err);
+
+    return {};
+  }
 }

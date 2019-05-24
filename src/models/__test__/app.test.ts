@@ -78,7 +78,7 @@ describe("Get a template for updating data for SQL", () => {
         text: "test",
         created_at: new Date
       },
-      result: "id = $1, text = $2, created_at = $3",
+      result: "text = $1, created_at = $2",
     },
     {
       description: "Get a template from data that is include undefined object",
@@ -86,7 +86,7 @@ describe("Get a template for updating data for SQL", () => {
         id: "1",
         text: "check undefined",
       },
-      result: "id = $1, text = $2",
+      result: "text = $1",
     }
   ];
 
