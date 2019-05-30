@@ -19,7 +19,7 @@ export default class Post extends App<PostModel> {
     super("posts");
   }
 
-  getInsertSQLOptions = (post: PostModel, urls: string[], requestedTableLength: number, ) => {
+  getInsertSQLOptions = (post: PostModel, urls: string[]) => {
     const { id, created_at } = post;
 
     if (!id || !created_at) {
@@ -27,8 +27,9 @@ export default class Post extends App<PostModel> {
     }
 
     type SQLValues = string | Date | number;
-    return urls.reduce((sqlParameters: [string[], SQLValues[]], url, index): [string[], SQLValues[]] => {
-      const firstKey = index + requestedTableLength;
+    return urls.reduce((sqlParameters: [string[], SQLValues[]], url): [string[], SQLValues[]] => {
+      const escapeKeyLength = sqlParameters[0].length;
+      const firstKey = escapeKeyLength === 0 ? 1 : (escapeKeyLength * 3) + 1;
       const escapeKeys = [
         ...sqlParameters[0],
         `($${firstKey}, $${firstKey + 1}, $${firstKey + 2})`
@@ -48,13 +49,12 @@ export default class Post extends App<PostModel> {
     }, [[], []]);
   }
 
-  getInsertUrls = (post: PostModel, urls: string[], requestedTableLength: number) => {
+  getInsertUrls = (post: PostModel, urls: string[]) => {
     if (urls.length === 0) {
       throw new Error("Can not empty urls");
     }
 
-
-    const [escapeKey, values] = this.getInsertSQLOptions(post, urls, requestedTableLength);
+    const [escapeKey, values] = this.getInsertSQLOptions(post, urls);
 
     const sql = `
       WITH urls AS (
@@ -88,8 +88,7 @@ export default class Post extends App<PostModel> {
     }
 
     const post: PostModel = postData.rows[0];
-    const requestedTableLength = Object.keys(postData).length;
-    const { sql, values } = this.getInsertUrls(post, urls, requestedTableLength);
+    const { sql, values } = this.getInsertUrls(post, urls);
 
     this.exec(sql, values);
   }
