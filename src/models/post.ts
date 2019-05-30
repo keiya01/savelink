@@ -19,7 +19,7 @@ export default class Post extends App<PostModel> {
     super("posts");
   }
 
-  getInsertSQLOptions = (post: PostModel, urls: string[]) => {
+  getInsertUrlsOptions = (post: PostModel, urls: string[]) => {
     const { id, created_at } = post;
 
     if (!id || !created_at) {
@@ -54,7 +54,11 @@ export default class Post extends App<PostModel> {
       throw new Error("Can not empty urls");
     }
 
-    const [escapeKey, values] = this.getInsertSQLOptions(post, urls);
+    if(!post.id || !post.created_at) {
+      throw new Error("Could not find id and created_at. Please include id and created_at to posts.");
+    }
+
+    const [escapeKey, values] = this.getInsertUrlsOptions(post, urls);
 
     const sql = `
       WITH urls AS (

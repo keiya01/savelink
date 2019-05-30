@@ -1,6 +1,6 @@
+/* eslint-disable no-undef */
 import Post, { PostModel } from "../post";
 
-/* eslint-disable no-undef */
 describe("Check the SQL syntax for inserting post_urls", () => {
   const date = new Date()
   const tests = [
@@ -46,6 +46,17 @@ describe("Check the SQL syntax for inserting post_urls", () => {
         urls: []
       },
       result: new Error("Can not empty urls"),
+      isError: true
+    },
+    {
+      description: "Check that the error occurred when id and created_at ware not included in posts",
+      data: {
+        post: <PostModel>{
+          comment: "hey",
+        },
+        urls: ["https://hello.com", "https://test.com"]
+      },
+      result: new Error("Could not find id and created_at. Please include id and created_at to posts."),
       isError: true
     }
   ];
