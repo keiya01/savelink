@@ -287,7 +287,7 @@ describe("Check that setUpdateParameters function set updateing postgreSQL data"
     const appHandler = new AppHandler();
     test(description, () => {
       if (isError && result instanceof UserInputError) {
-        const getThrowError = appHandler.setUpdateParameters({ ...data }, noParameterErrorHandle);
+        const getThrowError = () => appHandler.setUpdateParameters({ ...data }, noParameterErrorHandle);
         expect(getThrowError)
           .toThrowError(result);
       } else {
