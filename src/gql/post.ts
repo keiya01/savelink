@@ -6,9 +6,15 @@ import postsHandler  from "../handlers/posts_handler";
  const typeDef = `
   type Post {
     id: ID
-    uri: String
+    urls: [PostUrls]
     comment: String
-    user_id: ID!
+    user_id: ID
+  }
+
+  type PostUrls {
+    id: ID
+    url: String
+    post_id: ID
   }
 `;
 

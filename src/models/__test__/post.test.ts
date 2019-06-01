@@ -20,16 +20,13 @@ describe("Check the SQL syntax for inserting post_urls", () => {
       },
       result: {
         sql: `
-      WITH urls AS (
-        INSERT INTO post_urls (
-          url,
-          post_id,
-          created_at
-        ) 
-        VALUES ($1, $2, $3),($4, $5, $6),($7, $8, $9)
-        RETURNING *
-      )
-      SELECT * from post, urls;
+      INSERT INTO post_urls (
+        url,
+        post_id,
+        created_at
+      ) 
+      VALUES ($1, $2, $3),($4, $5, $6),($7, $8, $9)
+      RETURNING *;
     `,
         values: ["https://hello.com", 1, date, "https://test.com", 1, date, "https://world.com", 1, date]
       },

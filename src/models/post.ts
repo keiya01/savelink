@@ -61,16 +61,13 @@ export default class Post extends App<PostModel> {
     const [escapeKey, values] = this.getInsertUrlsOptions(post, urls);
 
     const sql = `
-      WITH urls AS (
-        INSERT INTO post_urls (
-          url,
-          post_id,
-          created_at
-        ) 
-        VALUES ${escapeKey.join()}
-        RETURNING *
-      )
-      SELECT * from post, urls;
+      INSERT INTO post_urls (
+        url,
+        post_id,
+        created_at
+      ) 
+      VALUES ${escapeKey.join()}
+      RETURNING *;
     `;
 
     return {
@@ -94,7 +91,22 @@ export default class Post extends App<PostModel> {
     const post: PostModel = postData.rows[0];
     const { sql, values } = this.getInsertUrls(post, urls);
 
-    this.exec(sql, values);
-  }
+    let postUrlsData: QueryResult | null = null;
+    try {
+      postUrlsData = await this.exec(sql, values);
+    } catch({stack}) {
+      throw new Error(stack);
+    }
 
+    if (!postUrlsData || postUrlsData.rowCount === 0) {
+      throw new Error("Could not save data");
+    }
+
+    const postUrls = postUrlsData.rows;
+
+    return {
+      ...post,
+      urls: postUrls
+    }
+  }
 }

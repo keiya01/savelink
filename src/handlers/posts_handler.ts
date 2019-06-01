@@ -5,24 +5,26 @@ import { QueryResult } from "pg";
 import { ERROR_TYPE } from "../constants/error";
 
 export default class PostsHandler extends AppHandler {
-  private validate(post: { uri?: string, comment?: string }) {
-    const { uri, comment } = post;
+  private validate(post: { urls?: string[], comment?: string }) {
+    const { urls, comment } = post;
 
-    if (uri === "") {
-      throw new UserInputError(`URI can not be empty`, {
-        key: "uri",
-        value: uri,
-        type: ERROR_TYPE.Empty
-      });
+    if (!urls || urls.length === 0) {
+        throw new UserInputError(`URI can not be empty`, {
+          key: "urls",
+          value: urls,
+          type: ERROR_TYPE.Empty
+        });
     }
 
-    if (uri && !this.checkURI(uri)) {
-      throw new UserInputError(`This value can not be used: ${uri}`, {
-        key: "uri",
-        value: uri,
-        type: ERROR_TYPE.Format
-      });
-    }
+    urls.map(url => {
+      if (!this.checkURI(url)) {
+        throw new UserInputError(`This value can not be used: ${url}`, {
+          key: "url",
+          value: url,
+          type: ERROR_TYPE.Format
+        });
+      }
+    })
 
     if (comment === "") {
       throw new UserInputError(`Comment can not be empty`, {
@@ -113,13 +115,13 @@ export default class PostsHandler extends AppHandler {
     return posts;
   }
 
-  public create = async (_, { uri, comment, user_id }) => {
+  public create = async (_, { urls, comment, user_id }) => {
     this.validateId(user_id);
-    this.validate({uri, comment});
+    this.validate({urls, comment});
 
     const p = new Post();
 
-    const tableData = { uri, comment, user_id, created_at: new Date };
+    const tableData = { urls, comment, user_id, created_at: new Date };
 
     let err: Object | null = null;
     let postData: QueryResult | null = null;
@@ -141,10 +143,10 @@ export default class PostsHandler extends AppHandler {
     return post;
   }
 
-  public update = async (_, { id, uri, comment }) => {
+  public update = async (_, { id, comment }) => {
     this.validateId(id);
 
-    let updatingData: PostModel = this.setUpdateParameters({ id, uri, comment }, (table: Object) => {
+    const updateParameter = this.setUpdateParameters({ comment }, (table: Object) => {
       const columns = Object.keys(table);
       throw new UserInputError("Please enter a value in the form", {
         keys: columns,
@@ -153,7 +155,12 @@ export default class PostsHandler extends AppHandler {
       });
     });
 
-    this.validate(updatingData)
+    this.validate(updateParameter);
+
+    const updatingData = {
+      id,
+      ...updateParameter
+    }
 
     const p = new Post();
 
