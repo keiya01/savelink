@@ -5,6 +5,7 @@ export interface PostUrls {
   id?: string | number;
   url?: string;
   post_id?: string | number;
+  created_at?: Date;
 }
 
 export interface PostModel extends Object {
@@ -76,7 +77,7 @@ export default class Post extends App<PostModel> {
     };
   }
 
-  createPost = async (tableData: PostModel, urls: string[]) => {
+  createPost = async (tableData: PostModel, urls: string[]): Promise<QueryResult> => {
     let postData: QueryResult | null = null;
     try {
       postData = await this.create(tableData, true);
@@ -85,7 +86,7 @@ export default class Post extends App<PostModel> {
     }
 
     if (!postData || postData.rowCount === 0) {
-      throw new Error("Could not save data");
+      return postData;
     }
 
     const post: PostModel = postData.rows[0];
@@ -99,14 +100,19 @@ export default class Post extends App<PostModel> {
     }
 
     if (!postUrlsData || postUrlsData.rowCount === 0) {
-      throw new Error("Could not save data");
+      return postUrlsData;
     }
 
     const postUrls = postUrlsData.rows;
 
     return {
-      ...post,
-      urls: postUrls
+      ...postUrlsData,
+      rows: [
+        {
+          ...post,
+          urls: postUrls
+        }
+      ]
     }
   }
 }

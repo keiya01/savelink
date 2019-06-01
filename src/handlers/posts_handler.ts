@@ -121,12 +121,12 @@ export default class PostsHandler extends AppHandler {
 
     const p = new Post();
 
-    const tableData = { urls, comment, user_id, created_at: new Date };
+    const tableData = { comment, user_id, created_at: new Date };
 
     let err: Object | null = null;
     let postData: QueryResult | null = null;
     try {
-      postData = await p.create(tableData, true);
+      postData = await p.createPost(tableData, urls);
     } catch ({ stack }) {
       err = p.checkErrorMessage(tableData, stack);
       console.error(stack);
