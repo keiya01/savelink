@@ -54,11 +54,11 @@ export default class Post extends App<PostModel> {
     if (urls.length === 0) {
       throw new Error("Can not empty urls");
     }
-
+    
     if(!post.id || !post.created_at) {
       throw new Error("Could not find id and created_at. Please include id and created_at to posts.");
     }
-
+    
     const [escapeKey, values] = this.getInsertUrlsOptions(post, urls);
 
     const sql = `
@@ -79,6 +79,7 @@ export default class Post extends App<PostModel> {
 
   createPost = async (tableData: PostModel, urls: string[]): Promise<QueryResult> => {
     let postData: QueryResult | null = null;
+
     try {
       postData = await this.create(tableData, true);
     } catch ({ stack }) {
@@ -91,6 +92,7 @@ export default class Post extends App<PostModel> {
 
     const post: PostModel = postData.rows[0];
     const { sql, values } = this.getInsertUrls(post, urls);
+
 
     let postUrlsData: QueryResult | null = null;
     try {

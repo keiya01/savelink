@@ -166,7 +166,7 @@ export default class App<T extends Object> {
 
     let returningSyntax = "";
     if (isReturn) {
-      returningSyntax = `RETURNING ${fields.join()}`
+      returningSyntax = `RETURNING *`
     }
 
     const sql = `INSERT INTO ${this.tableName} (${fields.join()}) VALUES (${escapeKeys.join()}) ${returningSyntax};`;

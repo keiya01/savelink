@@ -17,7 +17,7 @@ export const typeDefs = gql`
 
   type Mutation {
     # post
-    createPost(uri: String!, user_id: ID!, comment: String): Post
+    createPost(urls: [String]!, user_id: ID!, comment: String): Post
     updatePost(id: ID!, comment: String!): Post
     deletePost(id: ID!): Post
     # user

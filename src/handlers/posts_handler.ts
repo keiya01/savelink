@@ -121,7 +121,7 @@ export default class PostsHandler extends AppHandler {
 
     const p = new Post();
 
-    const tableData = { comment, user_id, created_at: new Date };
+    const tableData = { comment, user_id, created_at: new Date() };
 
     let err: Object | null = null;
     let postData: QueryResult | null = null;
